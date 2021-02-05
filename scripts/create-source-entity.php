@@ -24,10 +24,10 @@ OUTPUT;
 
 class DestinationFileGenerator
 {
-    private const BARE_ENTITY_VHDL_FILE_PATH = __DIR__ . "/data/bare-entity.vhd";
+    private const BARE_ENTITY_VHDL_FILE_PATH = __DIR__ . "/data/source-entity.vhd";
 
     private string $filename;
-    private string $contents;
+    private string $contents = "";
 
     public function __construct(
         string $entityName,

@@ -2,7 +2,7 @@ library ieee;
 use ieee.std_logic_1164.all;
 
 entity <entity-name> is
-    port (
+    port(
 
     );
 end entity;
