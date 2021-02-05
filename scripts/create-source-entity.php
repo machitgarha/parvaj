@@ -36,6 +36,8 @@ class DestinationFileGenerator
     ) {
         $this->generateName($entityName, $groupName);
         $this->generateContents($entityName, $architectureName);
+
+        self::createParentDirectories($this->filename);
     }
 
     private function generateName(
@@ -57,6 +59,13 @@ class DestinationFileGenerator
             [$entityName, $architectureName],
             $file->fread($file->getSize())
         );
+    }
+
+    private static function createParentDirectories(string $filename): void
+    {
+        if (!mkdir(dirname($filename), 0755, true)) {
+            throw new \Exception("Cannot create parent directories.");
+        }
     }
 
     public function write(): void
