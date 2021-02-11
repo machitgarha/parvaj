@@ -39,7 +39,9 @@ function error(string $message, int $code = 1): int
 
 abstract class EntityFileCreator
 {
-    protected string $path;
+    protected const ERR_FILE_EXISTS = "VHDL file already exists.";
+
+    protected string $pathe;
     protected string $contents = "";
 
     protected string $entityName;
@@ -65,7 +67,7 @@ abstract class EntityFileCreator
     protected static function ensureNotExists(string $filePath): void
     {
         if (file_exists($filePath)) {
-            throw new \Exception("VHDL file already exists.");
+            throw new \Exception(static::ERR_FILE_EXISTS);
         }
     }
 
@@ -127,6 +129,8 @@ class SourceEntityFileCreator extends EntityFileCreator
 
 class UnitTestEntityFileCreator extends EntityFileCreator
 {
+    protected const ERR_FILE_EXISTS = "Unit-test VHDL file already exists.";
+
     private const BASE_DIRECTORY = __DIR__ . "/../tests/unit";
     private const TEMPLATE_FILE_PATH = __DIR__ . "/templates/unit-test-entity.vhd";
 
@@ -166,7 +170,7 @@ class UnitTestEntityFileCreator extends EntityFileCreator
 
         $contents = $sourceEntityFile->fread($sourceEntityFile->getSize());
 
-        if (!preg_match("/((entity)[^,]*(entity;))/i", $contents, $matches)) {
+        if (!preg_match("/(entity)[\s\S]*(entity;)/i", $contents, $matches)) {
             throw new \Exception(
                 "Source file does not contain any entities ($sourceEntityPath)."
             );
@@ -190,11 +194,11 @@ $argc--;
 
 if ($argc === 1 && in_array($argv[1], ["-h", "--help", "help"], true)) {
     printLine($outputHelp);
-    return 0;
+    exit(0);
 }
 
 if ($argc < 3) {
-    return error("Too few arguments.");
+    exit(error("Too few arguments."));
 }
 
 prepareShellArguments($argv);
@@ -205,12 +209,12 @@ if ($entityType === "source") {
 } elseif ($entityType === "unit-test") {
     $className = UnitTestEntityFileCreator::class;
 } else {
-    return error("Unknown entity type '$entityType'.");
+    exit(error("Unknown entity type '$entityType'."));
 }
 
 try {
     (new $className($entityName, $groupName, $architectureName))->write();
-    return 0;
+    exit(0);
 } catch (\Throwable $e) {
-    return error($e->getMessage(), $e->getCode());
+    exit(error($e->getMessage()));
 }
