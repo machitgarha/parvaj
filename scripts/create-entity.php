@@ -2,6 +2,7 @@
 <?php
 
 require __DIR__ . "/utils/print-line.php";
+require __DIR__ . "/utils/error.php";
 
 $outputHelp = <<<OUTPUT
 
@@ -28,14 +29,6 @@ Description:
     dashes, with .vhd extension.
 
 OUTPUT;
-
-function error(string $message, int $code = 1): int
-{
-    printLine($message);
-    printLine("See --help for more information.");
-
-    return $code;
-}
 
 abstract class EntityFileCreator
 {
@@ -182,7 +175,6 @@ class UnitTestEntityFileCreator extends EntityFileCreator
         )));
     }
 }
-
 
 function prepareShellArguments(array &$argv): void
 {
