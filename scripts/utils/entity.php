@@ -1,10 +1,85 @@
 <?php
 
+abstract class EntityFileInfo
+{
+    // It must not end in slash
+    protected const BASE_DIRECTORY = null;
+
+    protected string $filename;
+    protected ?string $filePath = null;
+
+    protected string $entityName;
+    protected ?string $groupName = null;
+
+    public function __construct(
+        string $entityName,
+        string $groupName = null
+    ) {
+        $this->entityName = $entityName;
+        $this->groupName = $groupName;
+
+        $this->filename = $this->generateFilename();
+        $this->filePath = $this->generatePath();
+    }
+
+    protected function generateFilename(): string
+    {
+        return static::canonicalizeName($this->entityName) . ".vhd";
+    }
+
+    protected function generatePath(): string
+    {
+        if ($this->groupName === null) {
+            return null;
+        }
+
+        /*
+         * If $this->filename is uninitialized, then an Error is thrown. Because this
+         * class is abstract, it does not matter whether static::BASE_DIRECTORY is defined
+         * here or not, as it cannot be instantiated; but, is expected to be defined in
+         * children classes.
+         */
+        return static::BASE_DIRECTORY . "/{$this->groupName}/{$this->filename}";
+    }
+
+    protected static function canonicalizeName(string $filename): string
+    {
+        return str_replace("_", "-", $filename);
+    }
+
+    public function getFilename(): string
+    {
+        return $this->filename;
+    }
+
+    public function getPath(): string
+    {
+        if ($this->filePath === null) {
+            throw new \Exception(
+                "Cannot return file path: Group name is empty"
+            );
+        }
+
+        return $this->filePath;
+    }
+}
+
+class SourceEntityFileInfo extends EntityFileInfo
+{
+    protected const BASE_DIRECTORY = __DIR__ . "/../../src";
+}
+
+class UnitTestEntityFileInfo extends EntityFileInfo
+{
+    protected const BASE_DIRECTORY = __DIR__ . "/../../tests/unit";
+}
+
 abstract class EntityFileCreator
 {
+    protected const TEMPLATES_DIR = __DIR__ . "/../templates";
     protected const ERR_FILE_EXISTS = "VHDL file already exists.";
 
-    protected string $pathe;
+    protected string $path;
     protected string $contents = "";
 
     protected string $entityName;
@@ -20,12 +95,12 @@ abstract class EntityFileCreator
         $this->groupName = $groupName;
         $this->architectureName = $architectureName;
 
-        $this->path = $this->generatePath($entityName, $groupName);
-        $this->contents = $this->generateContents($entityName, $architectureName);
+        $this->path = $this->generatePath();
+        $this->contents = $this->generateContents();
     }
 
-    abstract public function generatePath(): string;
-    abstract public function generateContents(): string;
+    abstract protected function generatePath(): string;
+    abstract protected function generateContents(): string;
 
     protected static function ensureNotExists(string $filePath): void
     {
@@ -40,11 +115,6 @@ abstract class EntityFileCreator
         if (!is_dir($dir) && !mkdir(dirname($filePath), 0755, true)) {
             throw new \Exception("Cannot create file's parent directories.");
         }
-    }
-
-    protected static function canonicalizeName(string $filename): string
-    {
-        return str_replace("_", "-", $filename);
     }
 
     protected static function replacePlaceholders(
@@ -70,16 +140,14 @@ abstract class EntityFileCreator
 
 class SourceEntityFileCreator extends EntityFileCreator
 {
-    private const BASE_DIRECTORY = __DIR__ . "/../../src";
-    private const TEMPLATE_FILE_PATH = __DIR__ . "/../templates/source-entity.vhd";
+    protected const TEMPLATE_FILE_PATH = parent::TEMPLATES_DIR . "/source-entity.vhd";
 
-    public function generatePath(): string
+    protected function generatePath(): string
     {
-        return self::BASE_DIRECTORY . "/{$this->groupName}/" .
-            self::canonicalizeName($this->entityName) . ".vhd";
+        return (new SourceEntityFileInfo($this->entityName, $this->groupName))->getPath();
     }
 
-    public function generateContents(): string
+    protected function generateContents(): string
     {
         $file = new SplFileObject(self::TEMPLATE_FILE_PATH, "r");
 
@@ -94,21 +162,33 @@ class UnitTestEntityFileCreator extends EntityFileCreator
 {
     protected const ERR_FILE_EXISTS = "Unit-test VHDL file already exists.";
 
-    private const BASE_DIRECTORY = __DIR__ . "/../../tests/unit";
-    private const TEMPLATE_FILE_PATH = __DIR__ . "/../templates/unit-test-entity.vhd";
+    private const TEMPLATE_FILE_PATH = parent::TEMPLATES_DIR . "/unit-test-entity.vhd";
 
-    public function generatePath(): string
-    {
-        return self::BASE_DIRECTORY . "/{$this->groupName}/" .
-            self::canonicalizeName("test_{$this->entityName}") . ".vhd";
+    private string $testEntityName;
+
+    public function __construct(
+        string $entityName,
+        string $groupName,
+        string $architectureName = "structural"
+    ) {
+        $this->testEntityName = "test_$entityName";
+
+        parent::__construct($entityName, $groupName, $architectureName);
     }
 
-    public function generateContents(): string
+    protected function generatePath(): string
+    {
+        return (new UnitTestEntityFileInfo(
+            $this->testEntityName, $this->groupName
+        ))->getPath();
+    }
+
+    protected function generateContents(): string
     {
         $file = new SplFileObject(self::TEMPLATE_FILE_PATH, "r");
 
         return self::replacePlaceholders($file->fread($file->getSize()), [
-            "entity-name" => "test_{$this->entityName}",
+            "entity-name" => $this->testEntityName,
             "architecture-name" => $this->architectureName,
             "component" => $this->getSourceEntityAsComponent(),
             "source-entity-name" => $this->entityName,

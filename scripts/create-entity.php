@@ -63,5 +63,5 @@ try {
     (new $className($entityName, $groupName, $architectureName))->write();
     exit(0);
 } catch (\Throwable $e) {
-    exit(error($e->getMessage()));
+    exit(error($e->getMessage(), $e->getCode()));
 }
