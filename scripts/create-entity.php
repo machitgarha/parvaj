@@ -65,3 +65,5 @@ try {
 } catch (\Throwable $e) {
     exit(error($e->getMessage(), $e->getCode()));
 }
+
+printLine("File created successfully.");

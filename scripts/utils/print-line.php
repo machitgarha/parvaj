@@ -1,12 +1,16 @@
 <?php
 
-function printLine(...$args)
+function printLine(...$args): void
 {
     foreach ($args as $arg) {
         if (is_array($arg)) {
-            printLine(...$arg);
+            foreach ($arg as $line) {
+                printLine($line);
+            }
+            return;
+        } else {
+            echo $arg;
         }
-        echo $arg;
     }
     echo PHP_EOL;
 }

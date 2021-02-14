@@ -2,8 +2,8 @@
 
 abstract class EntityFileInfo
 {
-    // It must not end in slash
     protected const BASE_DIRECTORY = null;
+    public const VHDL_EXTENSION = "vhd";
 
     protected string $filename;
     protected ?string $filePath = null;
@@ -24,10 +24,10 @@ abstract class EntityFileInfo
 
     protected function generateFilename(): string
     {
-        return static::canonicalizeName($this->entityName) . ".vhd";
+        return static::canonicalizeName($this->entityName) . "." . static::VHDL_EXTENSION;
     }
 
-    protected function generatePath(): string
+    protected function generatePath(): ?string
     {
         if ($this->groupName === null) {
             return null;
@@ -60,7 +60,24 @@ abstract class EntityFileInfo
             );
         }
 
-        return $this->filePath;
+        return realpath($this->filePath);
+    }
+
+    public function findPath(): self
+    {
+        $directoryIterator = new DirectoryIterator(static::BASE_DIRECTORY);
+
+        foreach ($directoryIterator as $item) {
+            if (
+                $item->isDir() && !$item->isDot() &&
+                file_exists($path = $item->getPathname() . "/{$this->filename}")
+            ) {
+                $this->filePath = $path;
+                return $this;
+            }
+        }
+
+        throw new \Exception("Cannot find path of entity '{$this->entityName}'");
     }
 }
 
