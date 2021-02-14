@@ -156,6 +156,10 @@ $entityFilePaths = getAllDependenciesPath($testEntityName, false);
 try {
     ["ghdl" => $ghdlExec, "gtkwave" => $gtkwaveExec] = findNecessaryCommands();
 
+    if (!is_dir($workdir) && !mkdir($workdir)) {
+        throw new \Exception("Cannot create '$workdir' directory.");
+    }
+
     printLine("Analyzing files...");
     analyzeEntityFiles($ghdlExec, $entityFilePaths, $workdir);
 
