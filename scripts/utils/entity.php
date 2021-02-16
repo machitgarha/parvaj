@@ -1,5 +1,11 @@
 <?php
 
+declare(strict_types = 1);
+
+require __DIR__ . "/../vendor/autoload.php";
+
+use Webmozart\PathUtil\Path;
+
 abstract class EntityFileInfo
 {
     protected const BASE_DIRECTORY = null;
@@ -60,7 +66,7 @@ abstract class EntityFileInfo
             );
         }
 
-        return realpath($this->filePath);
+        return Path::canonicalize($this->filePath);
     }
 
     public function findPath(): self
@@ -129,8 +135,8 @@ abstract class EntityFileCreator
     protected static function createParentDirectories(string $filePath): void
     {
         $dir = dirname($filePath);
-        if (!is_dir($dir) && !mkdir(dirname($filePath), 0755, true)) {
-            throw new \Exception("Cannot create file's parent directories.");
+        if (!is_dir($dir) && !@mkdir(dirname($filePath), 0755, true)) {
+            throw new \Exception("Cannot create file's parent directories ($filePath).");
         }
     }
 
@@ -191,6 +197,8 @@ class UnitTestEntityFileCreator extends EntityFileCreator
         $this->testEntityName = "test_$entityName";
 
         parent::__construct($entityName, $groupName, $architectureName);
+
+        echo $this->path . PHP_EOL;
     }
 
     protected function generatePath(): string
