@@ -10,6 +10,7 @@ require_once __DIR__ . "/utils/entity.php";
 
 use Symfony\Component\Process\Process;
 use Symfony\Component\Process\ExecutableFinder;
+use Symfony\Component\Process\Exception\ProcessTimedOutException;
 
 $outputHelp = <<<OUTPUT
 
@@ -76,7 +77,8 @@ function getWaveformFilePath(string $testEntityFilePath)
 
 function runProcess(array $shellArgs): void
 {
-    $process = new Process($shellArgs);
+    // Never end a process, until the user kills it himself
+    $process = new Process($shellArgs, null, null, null, null);
 
     if ($process->run() !== 0) {
         throw new \Exception($process->getErrorOutput());
