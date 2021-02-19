@@ -81,7 +81,11 @@ function runProcess(array $shellArgs): void
     $process = new Process($shellArgs, null, null, null, null);
 
     if ($process->run() !== 0) {
-        throw new \Exception($process->getErrorOutput());
+        throw new \Exception(
+            !empty($process->getErrorOutput()) ?
+            $process->getErrorOutput() :
+            $process->getOutput()
+        );
     }
 }
 
