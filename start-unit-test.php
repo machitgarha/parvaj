@@ -32,16 +32,35 @@ Description:
 
 OUTPUT;
 
-const DEPENDENCY_FINDER_REGEX_PATTERN = "/component\s+([a-z0-9_]+)/i";
+const COMPONENT_FINDER_REGEX = "/component\s+([a-z0-9_]+)/i";
+const PACKAGE_FINDER_REGEX = "/use work.(\w+).\w+;/";
 const WAVEFORM_FILE_EXTENSION = "ghw";
 
-function getEntityDependencies(string $entityFileContents): array
+function getEntityDependentUnitRegexly(string $entityFileContents, string $regex): array
 {
-    if (preg_match_all(DEPENDENCY_FINDER_REGEX_PATTERN, $entityFileContents, $matches)) {
+    if (preg_match_all($regex, $entityFileContents, $matches)) {
         return $matches[1];
     } else {
         return [];
     }
+}
+
+function getEntityDependentComponents(string $entityFileContents): array
+{
+    return getEntityDependentUnitRegexly($entityFileContents, COMPONENT_FINDER_REGEX);
+}
+
+function getEntityDependentPackages(string $entityFileContents): array
+{
+    return getEntityDependentUnitRegexly($entityFileContents, PACKAGE_FINDER_REGEX);
+}
+
+function getEntityDependencies(string $entityFileContents): array
+{
+    return [
+        ...getEntityDependentComponents($entityFileContents),
+        ...getEntityDependentPackages($entityFileContents),
+    ];
 }
 
 function getAllDependenciesPath(string $entityName, bool $isSourceFile = true): array
