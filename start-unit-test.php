@@ -33,7 +33,7 @@ Description:
 OUTPUT;
 
 const COMPONENT_FINDER_REGEX = "/component\s+([a-z0-9_]+)/i";
-const PACKAGE_FINDER_REGEX = "/use work.(\w+).\w+;/";
+const PACKAGE_FINDER_REGEX = "/use\s+work.(\w+).\w+;/i";
 const WAVEFORM_FILE_EXTENSION = "ghw";
 
 function getEntityDependentUnitRegexly(string $entityFileContents, string $regex): array
