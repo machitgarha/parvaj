@@ -130,7 +130,7 @@ function analyzeEntityFiles(
     string $workdir
 ): void {
     // TODO: Allow the client to choose VHDL version
-    runProcess([$ghdlExec, "-a", "--workdir=$workdir", "--std=08", ...$entityFilePaths]);
+    runProcess([$ghdlExec, "-a", "--workdir=$workdir", ...$entityFilePaths]);
 }
 
 function elabRun(
@@ -144,7 +144,7 @@ function elabRun(
         empty($simulationOptions) ? [] : explode(" ", $simulationOptions);
 
     runProcess([
-        $ghdlExec, "--elab-run", "--workdir=$workdir", "--std=08", "-o", "$workdir/test-bench",
+        $ghdlExec, "--elab-run", "--workdir=$workdir", "-o", "$workdir/test-bench",
         "$testEntityName", "--wave=$outputWaveformFilePath", ...$simulationOptionsArr,
     ]);
 }
