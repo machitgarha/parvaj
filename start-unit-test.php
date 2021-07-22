@@ -144,7 +144,7 @@ function elabRun(
         empty($simulationOptions) ? [] : explode(" ", $simulationOptions);
 
     runProcess([
-        $ghdlExec, "--elab-run", "--workdir=$workdir", "-o", "$workdir/test-bench",
+        $ghdlExec, "--elab-run", "--workdir=$workdir", "--std=08", "-o", "$workdir/test-bench",
         "$testEntityName", "--wave=$outputWaveformFilePath", ...$simulationOptionsArr,
     ]);
 }
