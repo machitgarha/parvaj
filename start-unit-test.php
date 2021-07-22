@@ -129,7 +129,8 @@ function analyzeEntityFiles(
     array $entityFilePaths,
     string $workdir
 ): void {
-    runProcess([$ghdlExec, "-a", "--workdir=$workdir", ...$entityFilePaths]);
+    // TODO: Allow the client to choose VHDL version
+    runProcess([$ghdlExec, "-a", "--workdir=$workdir", "--std=08", ...$entityFilePaths]);
 }
 
 function elabRun(
