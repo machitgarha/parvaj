@@ -39,8 +39,8 @@ abstract class AbstractEntityFileCreator
 
     protected static function createParentDirectories(string $filePath): void
     {
-        $dir = dirname($filePath);
-        if (!is_dir($dir) && !@mkdir(dirname($filePath), 0755, true)) {
+        $dir = \dirname($filePath);
+        if (!\is_dir($dir) && !@\mkdir(dirname($filePath), 0755, true)) {
             throw new \Exception("Cannot create file's parent directories ($filePath).");
         }
     }
@@ -49,9 +49,9 @@ abstract class AbstractEntityFileCreator
         string $templateString,
         array $replacementMappings
     ): string {
-        return str_replace(
-            array_map(fn ($i) => "<$i>", array_keys($replacementMappings)),
-            array_values($replacementMappings),
+        return \str_replace(
+            \array_map(fn ($i) => "<$i>", \array_keys($replacementMappings)),
+            \array_values($replacementMappings),
             $templateString
         );
     }
@@ -61,7 +61,7 @@ abstract class AbstractEntityFileCreator
         self::ensureNotExists($this->path);
         self::createParentDirectories($this->path);
 
-        $file = new SplFileObject($this->path, "w");
+        $file = new \SplFileObject($this->path, "w");
         $file->fwrite($this->contents);
     }
 }
