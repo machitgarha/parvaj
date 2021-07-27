@@ -38,6 +38,7 @@ class RunUnitTestCommand extends Command
         Where temporary files live is the working directory (e.g. object files). You can consider
         it the value of --workdir option passed to GHDL.
         DESCRIPTION;
+    protected const OPT_WORKDIR_DEFAULT = 'build/';
 
     protected const OPT_SIMULATION_OPTIONS_NAME = 'simulation-options';
     protected const OPT_SIMULATION_OPTIONS_DESCRIPTION = <<<'DESCRIPTION'
@@ -67,12 +68,15 @@ class RunUnitTestCommand extends Command
             )
             ->addOption(
                 static::OPT_WORKDIR_NAME,
+                null,
                 InputOption::VALUE_REQUIRED,
-                static::OPT_WORKDIR_DESCRIPTION
+                static::OPT_WORKDIR_DESCRIPTION,
+                static::OPT_WORKDIR_DEFAULT,
             )
             ->addOption(
                 static::OPT_SIMULATION_OPTIONS_NAME,
-                InputOption::VALUE_IS_ARRAY,
+                null,
+                InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
                 static::OPT_SIMULATION_OPTIONS_DESCRIPTION,
             )
         ;
@@ -186,7 +190,7 @@ class RunUnitTestCommand extends Command
 
         if ($process->run() !== 0) {
             throw new \Exception(
-                !\empty($process->getErrorOutput()) ?
+                !empty($process->getErrorOutput()) ?
                 $process->getErrorOutput() :
                 $process->getOutput()
             );
@@ -226,7 +230,7 @@ class RunUnitTestCommand extends Command
         string $simulationOptions
     ): void {
         $simulationOptionsArr =
-            \empty($simulationOptions) ? [] : explode(" ", $simulationOptions);
+            empty($simulationOptions) ? [] : \explode(" ", $simulationOptions);
 
         runProcess([
             $ghdlExec, "--elab-run", "--workdir=$workdir", "-o", "$workdir/test-bench",
