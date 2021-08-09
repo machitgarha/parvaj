@@ -23,28 +23,27 @@ class RunUnitTestCommand extends Command
         DESCRIPTION;
     // TODO: Add an example
     protected const HELP = <<<'HELP'
-        Analyzes all needed entities (including source files) by resolving all dependencies,
-        elaborates and runs the particular unit-test, and saves the waveform result into a file,
-        with the help of GHDL. At last, it displays the waveform in a GtkWave window.
+        Analyzes all needed entities (including source files) by resolving all
+        dependencies, elaborates and runs the particular unit-test, and saves
+        the waveform result into a file, with the help of GHDL. At last, it
+        displays the waveform in a GtkWave window.
         HELP;
 
     protected const ARG_TEST_ENTITY_NAME_NAME = 'test-entity-name';
-    protected const ARG_TEST_ENTITY_NAME_DESCRIPTION = <<<'DESCRIPTION'
-        The name of the unit-test entity.
-        DESCRIPTION;
+    protected const ARG_TEST_ENTITY_NAME_DESCRIPTION =
+        'The name of the unit-test entity.';
 
     protected const OPT_WORKDIR_NAME = 'workdir';
-    protected const OPT_WORKDIR_DESCRIPTION = <<<'DESCRIPTION'
-        Where temporary files live is the working directory (e.g. object files). You can consider
-        it the value of --workdir option passed to GHDL.
-        DESCRIPTION;
+    protected const OPT_WORKDIR_DESCRIPTION =
+        'Where temporary files live is the working directory (e.g. object ' . 'files). You can consider it the value of --workdir option passed to ' .
+        ' GHDL.';
     protected const OPT_WORKDIR_DEFAULT = 'build/';
 
     protected const OPT_SIMULATION_OPTIONS_NAME = 'simulation-options';
-    protected const OPT_SIMULATION_OPTIONS_DESCRIPTION = <<<'DESCRIPTION'
-        Simulation options passed to GHDL when running the test. It must not include the --wave
-        option, as it is generated automatically. An example could be: --stop-time=3ns.
-        DESCRIPTION;
+    protected const OPT_SIMULATION_OPTIONS_DESCRIPTION =
+        'Simulation options passed to GHDL when running the test. It must ' .
+        'not include the --wave option, as it is generated automatically. An ' .
+        ' example could be: --stop-time=3ns.';
 
     private const COMPONENT_FINDER_REGEX = "/component\s+([a-z0-9_]+)/i";
     private const PACKAGE_FINDER_REGEX = "/use\s+work.(\w+).\w+;/i";
