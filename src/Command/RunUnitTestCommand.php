@@ -2,9 +2,9 @@
 
 namespace MAChitgarha\Parvaj\Command;
 
-use MAChitgarha\Parvaj\SourceEntityFileInfo;
-use MAChitgarha\Parvaj\AbstractEntityFileInfo;
-use MAChitgarha\Parvaj\UnitTestEntityFileInfo;
+use MAChitgarha\Parvaj\FileInfo\AbstractEntityFileInfo;
+use MAChitgarha\Parvaj\FileInfo\SourceEntityFileInfo;
+use MAChitgarha\Parvaj\FileInfo\UnitTestEntityFileInfo;
 
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputOption;

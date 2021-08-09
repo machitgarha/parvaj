@@ -2,8 +2,8 @@
 
 namespace MAChitgarha\Parvaj\Command;
 
-use MAChitgarha\Parvaj\SourceEntityFileCreator;
-use MAChitgarha\Parvaj\UnitTestEntityFileCreator;
+use MAChitgarha\Parvaj\EntityCreation\SourceEntityFileCreator;
+use MAChitgarha\Parvaj\EntityCreation\UnitTestEntityFileCreator;
 
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;

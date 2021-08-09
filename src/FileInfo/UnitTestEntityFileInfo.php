@@ -1,6 +1,6 @@
 <?php
 
-namespace MAChitgarha\Parvaj;
+namespace MAChitgarha\Parvaj\FileInfo;
 
 class UnitTestEntityFileInfo extends AbstractEntityFileInfo
 {
