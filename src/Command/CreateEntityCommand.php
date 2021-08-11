@@ -4,8 +4,8 @@ namespace MAChitgarha\Parvaj\Command;
 
 use MAChitgarha\Parvaj\SourceEntityFileCreator;
 use MAChitgarha\Parvaj\UnitTestEntityFileCreator;
-use MAChitgarha\Parvaj\SourceEntityFilePathGenerator;
-use MAChitgarha\Parvaj\UnitTestEntityFilePathGenerator;
+use MAChitgarha\Parvaj\SourceUnitFilePathGenerator;
+use MAChitgarha\Parvaj\UnitTestUnitFilePathGenerator;
 use MAChitgarha\Parvaj\SourceEntityFileContentGenerator;
 use MAChitgarha\Parvaj\UnitTestEntityFileContentGenerator;
 
@@ -124,7 +124,7 @@ class CreateEntityCommand extends Command
         );
 
         (new SourceEntityFileCreator(
-            new SourceEntityFilePathGenerator($entityName, $groupName),
+            new SourceUnitFilePathGenerator($entityName, $groupName),
             new SourceEntityFileContentGenerator(
                 $entityName,
                 $architectureName,
@@ -150,7 +150,7 @@ class CreateEntityCommand extends Command
         );
 
         (new UnitTestEntityFileCreator(
-            new UnitTestEntityFilePathGenerator($entityName, $groupName),
+            new UnitTestUnitFilePathGenerator($entityName, $groupName),
             new UnitTestEntityFileContentGenerator(
                 $entityName,
                 $architectureName,

@@ -174,7 +174,7 @@ class RunUnitTestCommand extends Command
         }
     }
 
-    private static function function analyzeEntityFiles(
+    private static function analyzeEntityFiles(
         string $ghdlExec,
         array $unitFilePaths,
         string $workdir

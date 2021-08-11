@@ -5,7 +5,7 @@ namespace MAChitgarha\Parvaj;
 class UnitTestEntityFileCreator extends AbstractEntityFileCreator
 {
     public function __construct(
-        UnitTestEntityFilePathGenerator $filePathGenerator,
+        UnitTestUnitFilePathGenerator $filePathGenerator,
         UnitTestEntityFileContentGenerator $contentGenerator,
         string $entityName,
         string $groupName,

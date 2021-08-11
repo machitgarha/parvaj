@@ -4,7 +4,7 @@ namespace MAChitgarha\Parvaj;
 
 abstract class AbstractEntityFileCreator
 {
-    private AbstractEntityFilePathGenerator $filePathGenerator;
+    private AbstractUnitFilePathGenerator $filePathGenerator;
     private AbstractEntityFileContentGenerator $contentGenerator;
 
     private string $entityName;
@@ -12,7 +12,7 @@ abstract class AbstractEntityFileCreator
     private string $architectureName;
 
     public function __construct(
-        AbstractEntityFilePathGenerator $filePathGenerator,
+        AbstractUnitFilePathGenerator $filePathGenerator,
         AbstractEntityFileContentGenerator $contentGenerator,
         string $entityName,
         string $groupName,
