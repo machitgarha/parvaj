@@ -15,7 +15,7 @@ use Symfony\Component\Process\Process;
 use Symfony\Component\Process\ExecutableFinder;
 use Symfony\Component\Process\Exception\ProcessTimedOutException;
 
-class RunUnitTestCommand extends Command
+class SimulateCommand extends Command
 {
     protected const NAME = 'simulate';
     protected const DESCRIPTION = <<<'DESCRIPTION'
@@ -143,7 +143,10 @@ class RunUnitTestCommand extends Command
         $output->writeln("Analyzing files...");
         self::analyzeEntityFiles($ghdlExec, $unitFilePaths, $workdir);
 
-        $waveformFilePath = self::generateWaveformFilePath($unitTestEntityPath);
+        $waveformFilePath = self::generateWaveformFilePath(
+            $unitTestEntityPath,
+            $waveformType,
+        );
 
         $output->writeln("Elab-running the test...");
         self::elabRun(
@@ -227,7 +230,7 @@ class RunUnitTestCommand extends Command
         string $workdir,
         string $waveformType,
         bool $noO,
-        array $options = []
+        array $options
     ): void {
         if ($waveformType === 'ghw') {
             $waveformOption = ["--wave=$outputWaveformFilePath"];
@@ -246,7 +249,7 @@ class RunUnitTestCommand extends Command
 
         self::runProcess([
             $ghdlExec, "--elab-run", "--workdir=$workdir", ...$oOption,
-            "$testEntityName", ...$waveformType, ...$options,
+            "$testEntityName", ...$waveformOption, ...$options,
         ]);
     }
 
