@@ -15,6 +15,8 @@ use Symfony\Component\Process\Process;
 use Symfony\Component\Process\ExecutableFinder;
 use Symfony\Component\Process\Exception\ProcessTimedOutException;
 
+use Webmozart\PathUtil\Path;
+
 class SimulateCommand extends Command
 {
     protected const NAME = 'simulate';
@@ -208,7 +210,9 @@ class SimulateCommand extends Command
         string $workdir
     ): void {
         // TODO: Allow the client to choose VHDL version
-        self::runProcess([$ghdlExec, "-a", "--workdir=$workdir", ...$unitFilePaths]);
+        self::runProcess([
+            $ghdlExec, "-a", "--workdir=$workdir", ...$unitFilePaths
+        ]);
     }
 
     private static function generateWaveformFilePath(
@@ -242,8 +246,8 @@ class SimulateCommand extends Command
             );
         }
 
-        $oOption = ['-o', "$workdir/$testEntityName"];
-        if (!$noO) {
+        $oOption = ['-o', Path::join($workdir, $testEntityName)];
+        if ($noO) {
             $oOption = [];
         }
 
