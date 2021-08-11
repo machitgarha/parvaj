@@ -3,12 +3,12 @@
 namespace MAChitgarha\Parvaj\Console;
 
 use MAChitgarha\Parvaj\Command\CreateEntityCommand;
-use MAChitgarha\Parvaj\Command\RunUnitTestCommand;
+use MAChitgarha\Parvaj\Command\SimulateCommand;
 
 class Application extends \Symfony\Component\Console\Application
 {
     public const NAME = 'Parvaj';
-    public const VERSION = '0.2.0-alpha.2';
+    public const VERSION = '0.2.0-alpha.3';
 
     public function __construct()
     {
@@ -21,7 +21,7 @@ class Application extends \Symfony\Component\Console\Application
     {
         $this->addCommands([
             new CreateEntityCommand(),
-            new RunUnitTestCommand(),
+            new SimulateCommand(),
         ]);
     }
 };
