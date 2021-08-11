@@ -17,16 +17,18 @@ use Symfony\Component\Process\Exception\ProcessTimedOutException;
 
 class RunUnitTestCommand extends Command
 {
-    protected const NAME = 'run-unit-test';
+    protected const NAME = 'simulate';
     protected const DESCRIPTION = <<<'DESCRIPTION'
-        Prepares a unit-test entity and runs it.
+        Simulates a unit-test entity.
         DESCRIPTION;
     // TODO: Add an example
     protected const HELP = <<<'HELP'
-        Analyzes all needed entities (including source files) by resolving all
-        dependencies, elaborates and runs the particular unit-test, and saves
-        the waveform result into a file, with the help of GHDL. At last, it
-        displays the waveform in a GtkWave window.
+        Runs a simulation for a particular unit-test entity.
+
+        Analyzes all needed source unit files by resolving all dependencies,
+        elaborates and runs the particular unit-test, and dumps the waveform
+        into a file, all with the help of GHDL. At last, it displays the
+        waveform visually in a GtkWave window.
         HELP;
 
     protected const ARG_TEST_ENTITY_NAME_NAME = 'test-entity-name';
@@ -39,11 +41,13 @@ class RunUnitTestCommand extends Command
         'GHDL.';
     protected const OPT_WORKDIR_DEFAULT = 'build/';
 
-    protected const OPT_SIMULATION_OPTIONS_NAME = 'simulation-options';
-    protected const OPT_SIMULATION_OPTIONS_DESCRIPTION =
-        'Simulation options passed to GHDL when running the test. It must ' .
-        'not include the --wave option, as it is generated automatically. An ' .
-        'example could be: --stop-time=3ns.';
+    protected const OPT_OPTION_NAME = 'option';
+    protected const OPT_OPTION_DESCRIPTION =
+        'Simulation options passed to GHDL when running the test. Some ' . 'options must not be used, or you might get an error during the ' .
+        'process, including --wave, --workdir and -o. It may make seems too ' .
+        'verbose, but for now, there must be exactly one per given option, ' .
+        'or things should not work correctly. An example could be: ' .
+        '--stop-time=3ns.';
 
     private const WAVEFORM_FILE_EXTENSION = "ghw";
 
@@ -71,10 +75,10 @@ class RunUnitTestCommand extends Command
                 static::OPT_WORKDIR_DEFAULT,
             )
             ->addOption(
-                static::OPT_SIMULATION_OPTIONS_NAME,
+                static::OPT_OPTION_NAME,
                 null,
                 InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
-                static::OPT_SIMULATION_OPTIONS_DESCRIPTION,
+                static::OPT_OPTION_DESCRIPTION,
             )
         ;
     }
@@ -90,7 +94,7 @@ class RunUnitTestCommand extends Command
             static::OPT_WORKDIR_NAME
         );
         $simulationOptions = $input->getOption(
-            static::OPT_SIMULATION_OPTIONS_NAME
+            static::OPT_OPTION_NAME
         );
 
         $dependencyResolver = new DependencyResolver(
