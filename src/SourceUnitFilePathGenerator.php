@@ -2,7 +2,7 @@
 
 namespace MAChitgarha\Parvaj;
 
-class SourceEntityFilePathGenerator extends AbstractEntityFilePathGenerator
+class SourceUnitFilePathGenerator extends AbstractUnitFilePathGenerator
 {
     protected static function getOperatingDirectory(): string
     {

@@ -4,7 +4,7 @@ namespace MAChitgarha\Parvaj;
 
 use Webmozart\PathUtil\Path;
 
-abstract class AbstractEntityFilePathGenerator
+abstract class AbstractFilePathGenerator
 {
     public const VHDL_EXTENSION = 'vhd';
 
