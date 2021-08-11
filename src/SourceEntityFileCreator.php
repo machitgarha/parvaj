@@ -1,8 +1,8 @@
 <?php
 
-namespace MAChitgarha\Parvaj\EntityCreation;
+namespace MAChitgarha\Parvaj;
 
-use MAChitgarha\Parvaj\FileInfo\SourceEntityFileInfo;
+use MAChitgarha\Parvaj\SourceEntityFileInfo;
 
 class SourceEntityFileCreator extends AbstractEntityFileCreator
 {

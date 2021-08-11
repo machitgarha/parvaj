@@ -1,10 +1,10 @@
 <?php
 
-namespace MAChitgarha\Parvaj\EntityCreation;
+namespace MAChitgarha\Parvaj;
 
 abstract class AbstractEntityFileCreator
 {
-    protected const TEMPLATES_DIR = __DIR__ . "/../templates";
+    protected const TEMPLATES_DIR = __DIR__ . "/../../templates";
     protected const ERR_FILE_EXISTS = "VHDL file already exists.";
 
     protected string $path;

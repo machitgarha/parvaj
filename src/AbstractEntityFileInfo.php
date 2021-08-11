@@ -1,6 +1,6 @@
 <?php
 
-namespace MAChitgarha\Parvaj\FileInfo;
+namespace MAChitgarha\Parvaj;
 
 use \Webmozart\PathUtil\Path;
 
