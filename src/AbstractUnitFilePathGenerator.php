@@ -8,12 +8,12 @@ abstract class AbstractUnitFilePathGenerator
 {
     public const VHDL_EXTENSION = 'vhd';
 
-    private string $entityName;
+    private string $unitName;
     private string $groupName;
 
-    public function __construct(string $entityName, string $groupName)
+    public function __construct(string $unitName, string $groupName)
     {
-        $this->entityName = $entityName;
+        $this->unitName = $unitName;
         $this->groupName = $groupName;
     }
 
@@ -56,7 +56,7 @@ abstract class AbstractUnitFilePathGenerator
     private function generateFileName(): string
     {
         // TODO: Make this user-specified
-        return \str_replace('_', '-', $this->entityName) . '.' .
+        return \str_replace('_', '-', $this->unitName) . '.' .
             self::VHDL_EXTENSION;
     }
 
