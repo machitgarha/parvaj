@@ -16,7 +16,7 @@ abstract class AbstractEntityFileCreator
         AbstractEntityFileContentGenerator $contentGenerator,
         string $entityName,
         string $groupName,
-        string $architectureName,
+        string $architectureName
     ) {
         $this->filePathGenerator = $filePathGenerator;
         $this->contentGenerator = $contentGenerator;
@@ -42,7 +42,7 @@ abstract class AbstractEntityFileCreator
         $baseDirectoryPath = $this->filePathGenerator->generateDirectoryPath();
 
         if (
-            !\is_dir($$baseDirectoryPath)
+            !\is_dir($baseDirectoryPath)
             && !@\mkdir($baseDirectoryPath, 0755, true)
         ) {
             throw new \RuntimeException(
@@ -53,7 +53,7 @@ abstract class AbstractEntityFileCreator
         return $this;
     }
 
-    private function ensureNotExists(string $filePath): self
+    private function ensureNotExists(): self
     {
         $entityFilePath = $this->filePathGenerator->generate();
 

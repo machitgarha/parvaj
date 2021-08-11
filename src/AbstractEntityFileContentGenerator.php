@@ -2,18 +2,12 @@
 
 namespace MAChitgarha\Parvaj;
 
-use Webmozart\PathUtil\Path;
 use Twig\Loader\FilesystemLoader as TwigFilesystemLoader;
 use Twig\Environment as TwigEnvironment;
 
 abstract class AbstractEntityFileContentGenerator
 {
-    private const TEMPLATES_PATH = Path::join(
-        __DIR__,
-        '..',
-        'templates',
-        'entity-creation',
-    );
+    private const TEMPLATES_PATH = __DIR__ . '/../templates/entity-creation';
 
     private string $entityName;
     private string $architectureName;
@@ -44,7 +38,7 @@ abstract class AbstractEntityFileContentGenerator
 
     protected function renderTemplate(TwigEnvironment $twig): string
     {
-        $twig->render($this->getTemplateFileName(), [
+        return $twig->render($this->getTemplateFileName(), [
             'entity_name' => $this->entityName,
             'architecture_name' => $this->architectureName,
         ]);

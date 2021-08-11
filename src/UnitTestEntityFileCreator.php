@@ -9,7 +9,7 @@ class UnitTestEntityFileCreator extends AbstractEntityFileCreator
         UnitTestEntityFileContentGenerator $contentGenerator,
         string $entityName,
         string $groupName,
-        string $architectureName,
+        string $architectureName
     ) {
         parent::__construct(
             $filePathGenerator,

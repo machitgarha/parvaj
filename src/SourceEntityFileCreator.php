@@ -9,7 +9,7 @@ class SourceEntityFileCreator extends AbstractEntityFileCreator
         SourceEntityFileContentGenerator $contentGenerator,
         string $entityName,
         string $groupName,
-        string $architectureName,
+        string $architectureName
     ) {
         parent::__construct(
             $filePathGenerator,
