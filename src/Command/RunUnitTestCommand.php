@@ -36,7 +36,7 @@ class RunUnitTestCommand extends Command
     protected const OPT_WORKDIR_NAME = 'workdir';
     protected const OPT_WORKDIR_DESCRIPTION =
         'Where temporary files live is the working directory (e.g. object ' . 'files). You can consider it the value of --workdir option passed to ' .
-        ' GHDL.';
+        'GHDL.';
     protected const OPT_WORKDIR_DEFAULT = 'build/';
 
     protected const OPT_SIMULATION_OPTIONS_NAME = 'simulation-options';
@@ -45,8 +45,6 @@ class RunUnitTestCommand extends Command
         'not include the --wave option, as it is generated automatically. An ' .
         'example could be: --stop-time=3ns.';
 
-    private const COMPONENT_FINDER_REGEX = "/component\s+([a-z0-9_]+)/i";
-    private const PACKAGE_FINDER_REGEX = "/use\s+work.(\w+).\w+;/i";
     private const WAVEFORM_FILE_EXTENSION = "ghw";
 
     protected function configure()
@@ -120,57 +118,6 @@ class RunUnitTestCommand extends Command
             ]);
             exit(1);
         }
-    }
-
-    protected function getEntityDependentUnitRegexly(
-        string $entityFileContents,
-        string $regex
-    ): array {
-        if (preg_match_all($regex, $entityFileContents, $matches)) {
-            return $matches[1];
-        } else {
-            return [];
-        }
-    }
-
-    protected function getEntityDependentComponents(string $entityFileContents): array
-    {
-        return getEntityDependentUnitRegexly($entityFileContents, self::COMPONENT_FINDER_REGEX);
-    }
-
-    protected function getEntityDependentPackages(string $entityFileContents): array
-    {
-        return getEntityDependentUnitRegexly($entityFileContents, self::PACKAGE_FINDER_REGEX);
-    }
-
-    protected function getEntityDependencies(string $entityFileContents): array
-    {
-        return [
-            ...getEntityDependentComponents($entityFileContents),
-            ...getEntityDependentPackages($entityFileContents),
-        ];
-    }
-
-    protected function getAllDependenciesPath(string $entityName, bool $isSourceFile = true): array
-    {
-        $entityFileInfo = $isSourceFile ?
-            new SourceEntityFileInfo($entityName) :
-            new UnitTestEntityFileInfo($entityName);
-
-        // If the path could not be found, an exception is thrown
-        $dependenciesPath = [$entityFileInfo->findPath()->getPath()];
-
-        $file = new \SplFileObject($dependenciesPath[0], "r");
-        $contents = $file->fread($file->getSize());
-
-        foreach (getEntityDependencies($contents) as $dependecyEntityName) {
-            $dependenciesPath = [
-                ...getAllDependenciesPath($dependecyEntityName),
-                ...$dependenciesPath,
-            ];
-        }
-
-        return $dependenciesPath;
     }
 
     protected function getWaveformFilePath(string $testEntityFilePath)
