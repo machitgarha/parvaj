@@ -8,7 +8,7 @@ class File
     {
         $file = new \SplFileObject($path, 'r');
 
-        return $file->read(
+        return $file->fread(
             $file->getSize()
         );
     }

@@ -3,6 +3,7 @@
 namespace MAChitgarha\Parvaj\Command;
 
 use MAChitgarha\Parvaj\DependencyResolver;
+use MAChitgarha\Parvaj\AbstractUnitFilePathGenerator;
 use MAChitgarha\Parvaj\UnitTestUnitFilePathGenerator;
 
 use Symfony\Component\Console\Command\Command;
@@ -99,7 +100,7 @@ class RunUnitTestCommand extends Command
         );
 
         $unitFilePaths = \iterator_to_array(
-            $$dependencyResolver->resolve()
+            $dependencyResolver->resolve()
         );
 
         ["ghdl" => $ghdlExec, "gtkwave" => $gtkwaveExec] =
@@ -118,11 +119,11 @@ class RunUnitTestCommand extends Command
             $testEntityName,
             $waveformFilePath,
             $workdir,
-            $simulationOptions
+            $simulationOptions,
         );
 
         $output->writeln("Opening the results in GtkWave...");
-        openGtkWave($gtkwaveExec, $waveformFilePath);
+        self::openGtkWave($gtkwaveExec, $waveformFilePath);
 
         return 0;
     }
@@ -131,7 +132,7 @@ class RunUnitTestCommand extends Command
         string $testEntityFilePath
     ): string {
         return \dirname($testEntityFilePath) . "/" . \str_replace(
-            AbstractEntityFileInfo::VHDL_EXTENSION,
+            AbstractUnitFilePathGenerator::VHDL_EXTENSION,
             self::WAVEFORM_FILE_EXTENSION,
             \basename($testEntityFilePath)
         );
@@ -180,7 +181,7 @@ class RunUnitTestCommand extends Command
         string $workdir
     ): void {
         // TODO: Allow the client to choose VHDL version
-        runProcess([$ghdlExec, "-a", "--workdir=$workdir", ...$unitFilePaths]);
+        self::runProcess([$ghdlExec, "-a", "--workdir=$workdir", ...$unitFilePaths]);
     }
 
     private static function elabRun(
@@ -188,14 +189,12 @@ class RunUnitTestCommand extends Command
         string $testEntityName,
         string $outputWaveformFilePath,
         string $workdir,
-        string $simulationOptions
+        array $simulationOptionsArr
     ): void {
-        $simulationOptionsArr =
-            empty($simulationOptions) ? [] : \explode(" ", $simulationOptions);
-
-        runProcess([
-            $ghdlExec, "--elab-run", "--workdir=$workdir", "-o", "$workdir/test-bench",
-            "$testEntityName", "--wave=$outputWaveformFilePath", ...$simulationOptionsArr,
+        self::runProcess([
+            $ghdlExec, "--elab-run", "--workdir=$workdir", "-o",
+            "$workdir/test-bench", "$testEntityName",
+            "--wave=$outputWaveformFilePath", ...$simulationOptionsArr,
         ]);
     }
 
@@ -203,6 +202,6 @@ class RunUnitTestCommand extends Command
         string $gtkwaveExec,
         string $waveformFilePath
     ): void {
-        runProcess([$gtkwaveExec, $waveformFilePath]);
+        self::runProcess([$gtkwaveExec, $waveformFilePath]);
     }
 }

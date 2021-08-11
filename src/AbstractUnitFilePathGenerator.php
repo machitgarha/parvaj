@@ -63,12 +63,12 @@ abstract class AbstractUnitFilePathGenerator
     public static function locate(string $unitName): string
     {
         $groupDirectoriesIterator = new \DirectoryIterator(
-            static::getOperatingDirectory()
+            static::generateOperatingDirectoryPath()
         );
 
         foreach ($groupDirectoriesIterator as $groupDirectory) {
             if (
-                !$item->isDot()
+                !$groupDirectory->isDot()
                 && $groupDirectory->isDir()
             ) {
                 $unitPath = (new static(

@@ -18,13 +18,13 @@ class DependencyResolver
 
     public function resolve(): \Generator
     {
-        yield from $this->findAllDependenciesOf(
+        yield from self::findDependencyUnitPathsRecursive(
             $this->mainUnitTestFilePath,
             [$this->mainUnitTestFilePath]
         );
     }
 
-    private function findDependencyUnitPathsRecursive(
+    private static function findDependencyUnitPathsRecursive(
         string $currentUnitPath,
         array $parentUnitPaths
     ): \Generator {
@@ -41,7 +41,7 @@ class DependencyResolver
                     $depUnitPath,
                     [
                         ...$parentUnitPaths,
-                        ...$currentUnitPath,
+                        $depUnitPath,
                     ]
                 );
             }
