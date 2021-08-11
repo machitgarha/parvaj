@@ -20,9 +20,16 @@ abstract class AbstractEntityFilePathGenerator
     public function generate(): string
     {
         return Path::join(
+            $this->generateDirectoryPath(),
+            $this->generateFileName(),
+        );
+    }
+
+    public function generateDirectoryPath(): string
+    {
+        return Path::join(
             $this->generateOperatingDirectoryPath(),
             $this->getGroupDirectory(),
-            $this->generateEntityFileName(),
         );
     }
 
@@ -46,9 +53,10 @@ abstract class AbstractEntityFilePathGenerator
         return $this->groupName;
     }
 
-    private function generateEntityFileName(): string
+    private function generateFileName(): string
     {
         // TODO: Make this user-specified
-        return \str_replace('_', '-', $this->entityName) . '.vhd';
+        return \str_replace('_', '-', $this->entityName) . '.' .
+            self::VHDL_EXTENSION;
     }
 }
