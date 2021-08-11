@@ -4,64 +4,78 @@ namespace MAChitgarha\Parvaj;
 
 abstract class AbstractEntityFileCreator
 {
-    protected const TEMPLATES_DIR = __DIR__ . "/../../templates";
-    protected const ERR_FILE_EXISTS = "VHDL file already exists.";
+    private AbstractEntityFilePathGenerator $filePathGenerator;
+    private AbstractEntityFileContentGenerator $contentGenerator;
 
-    protected string $path;
-    protected string $contents = "";
-
-    protected string $entityName;
-    protected string $groupName;
-    protected string $architectureName;
+    private string $entityName;
+    private string $groupName;
+    private string $architectureName;
 
     public function __construct(
+        AbstractEntityFilePathGenerator $filePathGenerator,
+        AbstractEntityFileContentGenerator $contentGenerator,
         string $entityName,
         string $groupName,
-        string $architectureName = "structural"
+        string $architectureName,
     ) {
+        $this->filePathGenerator = $filePathGenerator;
+        $this->contentGenerator = $contentGenerator;
+
         $this->entityName = $entityName;
         $this->groupName = $groupName;
         $this->architectureName = $architectureName;
-
-        $this->path = $this->generatePath();
-        $this->contents = $this->generateContents();
     }
 
-    abstract protected function generatePath(): string;
-    abstract protected function generateContents(): string;
-
-    protected static function ensureNotExists(string $filePath): void
+    public function create(): self
     {
-        if (file_exists($filePath)) {
-            throw new \Exception(static::ERR_FILE_EXISTS);
-        }
+        return $this
+            ->makeBaseDirectory()
+            ->ensureNotExists()
+            ->writeFile();
     }
 
-    protected static function createParentDirectories(string $filePath): void
+    /**
+     * Make the directory the entity file live in.
+     */
+    private function makeBaseDirectory(): self
     {
-        $dir = \dirname($filePath);
-        if (!\is_dir($dir) && !@\mkdir(dirname($filePath), 0755, true)) {
-            throw new \Exception("Cannot create file's parent directories ($filePath).");
+        $baseDirectoryPath = $this->filePathGenerator->generateDirectoryPath();
+
+        if (
+            !\is_dir($$baseDirectoryPath)
+            && !@\mkdir($baseDirectoryPath, 0755, true)
+        ) {
+            throw new \RuntimeException(
+                "Could not create directory '$baseDirectoryPath'"
+            );
         }
+
+        return $this;
     }
 
-    protected static function replacePlaceholders(
-        string $templateString,
-        array $replacementMappings
-    ): string {
-        return \str_replace(
-            \array_map(fn ($i) => "<$i>", \array_keys($replacementMappings)),
-            \array_values($replacementMappings),
-            $templateString
+    private function ensureNotExists(string $filePath): self
+    {
+        $entityFilePath = $this->filePathGenerator->generate();
+
+        if (\file_exists($entityFilePath)) {
+            throw new \RuntimeException(
+                "The entity file already exists at '$entityFilePath'"
+            );
+        }
+
+        return $this;
+    }
+
+    private function writeFile(): self
+    {
+        $file = new \SplFileObject(
+            $this->filePathGenerator->generate(),
+            "w"
         );
-    }
+        $file->fwrite(
+            $this->contentGenerator->generate()
+        );
 
-    public function write(): void
-    {
-        self::ensureNotExists($this->path);
-        self::createParentDirectories($this->path);
-
-        $file = new \SplFileObject($this->path, "w");
-        $file->fwrite($this->contents);
+        return $this;
     }
 }
