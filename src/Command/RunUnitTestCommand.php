@@ -43,7 +43,7 @@ class RunUnitTestCommand extends Command
     protected const OPT_SIMULATION_OPTIONS_DESCRIPTION =
         'Simulation options passed to GHDL when running the test. It must ' .
         'not include the --wave option, as it is generated automatically. An ' .
-        ' example could be: --stop-time=3ns.';
+        'example could be: --stop-time=3ns.';
 
     private const COMPONENT_FINDER_REGEX = "/component\s+([a-z0-9_]+)/i";
     private const PACKAGE_FINDER_REGEX = "/use\s+work.(\w+).\w+;/i";

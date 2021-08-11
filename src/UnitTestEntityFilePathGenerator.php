@@ -6,7 +6,7 @@ use Webmozart\PathUtil\Path;
 
 class UnitTestEntityFilePathGenerator extends AbstractEntityFilePathGenerator
 {
-    protected function getOperatingDirectory(): string
+    protected static function getOperatingDirectory(): string
     {
         return Path::join('tests', 'unit');
     }

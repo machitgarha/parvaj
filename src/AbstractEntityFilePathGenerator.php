@@ -28,25 +28,25 @@ abstract class AbstractEntityFilePathGenerator
     public function generateDirectoryPath(): string
     {
         return Path::join(
-            $this->generateOperatingDirectoryPath(),
+            static::generateOperatingDirectoryPath(),
             $this->getGroupDirectory(),
         );
     }
 
-    public function generateOperatingDirectoryPath(): string
+    public static function generateOperatingDirectoryPath(): string
     {
         return Path::join(
-            $this->getRootDirectory(),
-            $this->getOperatingDirectory(),
+            static::getRootDirectory(),
+            static::getOperatingDirectory(),
         );
     }
 
-    private function getRootDirectory(): string
+    private static function getRootDirectory(): string
     {
         return \getcwd();
     }
 
-    abstract protected function getOperatingDirectory(): string;
+    abstract protected static function getOperatingDirectory(): string;
 
     private function getGroupDirectory(): string
     {
