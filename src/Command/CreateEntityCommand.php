@@ -2,8 +2,12 @@
 
 namespace MAChitgarha\Parvaj\Command;
 
-use MAChitgarha\Parvaj\EntityCreation\SourceEntityFileCreator;
-use MAChitgarha\Parvaj\EntityCreation\UnitTestEntityFileCreator;
+use MAChitgarha\Parvaj\SourceEntityFileCreator;
+use MAChitgarha\Parvaj\UnitTestEntityFileCreator;
+use MAChitgarha\Parvaj\SourceEntityFilePathGenerator;
+use MAChitgarha\Parvaj\UnitTestEntityFilePathGenerator;
+use MAChitgarha\Parvaj\SourceEntityFileContentGenerator;
+use MAChitgarha\Parvaj\UnitTestEntityFileContentGenerator;
 
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -93,32 +97,71 @@ class CreateEntityCommand extends Command
         ;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
-    {
-        $entityFileCreatorClass = $this->getEntityFileCreatorClassName(
-            $input->getArgument(static::ARG_ENTITY_TYPE_NAME)
+    protected function execute(
+        InputInterface $input,
+        OutputInterface $output
+    ): int {
+        $entityType = $input->getArgument(static::ARG_ENTITY_TYPE_NAME);
+
+        if ($entityType === 'source') {
+            return $this->executeAsSourceEntity($input, $output);
+        } elseif ($entityType === 'unit-test') {
+            return $this->executeAsUnitTestEntity($input, $output);
+        } else {
+            // TODO: Handle with custom exceptions
+            throw new \RuntimeException('Wrong entity type');
+        }
+    }
+
+    private function executeAsSourceEntity(
+        InputInterface $input,
+        OutputInterface $output
+    ): int {
+        $entityName = $input->getArgument(static::ARG_ENTITY_NAME_NAME);
+        $groupName = $input->getArgument(static::ARG_GROUP_NAME_NAME);
+        $architectureName = $input->getArgument(
+            static::ARG_ARCHITECTURE_NAME_NAME
         );
 
-        (new $entityFileCreatorClass(
-            $input->getArgument(static::ARG_ENTITY_NAME_NAME),
-            $input->getArgument(static::ARG_GROUP_NAME_NAME),
-            $input->getArgument(static::ARG_ARCHITECTURE_NAME_NAME)
-        ))->write();
+        (new SourceEntityFileCreator(
+            new SourceEntityFilePathGenerator($entityName, $groupName),
+            new SourceEntityFileContentGenerator(
+                $entityName,
+                $architectureName,
+            ),
+            $entityName,
+            $groupName,
+            $architectureName,
+        ))->create();
 
         $output->writeln('File created successfully.');
 
         return 0;
     }
 
-    private function getEntityFileCreatorClassName(?string $entityType): string
-    {
-        if ($entityType === 'source') {
-            return SourceEntityFileCreator::class;
-        } elseif ($entityType === 'unit-test') {
-            return UnitTestEntityFileCreator::class;
-        } else {
-            // TODO: Handle with custom exceptions
-            throw new \Exception('Wrong entity type');
-        }
+    private function executeAsUnitTestEntity(
+        InputInterface $input,
+        OutputInterface $output
+    ): int {
+        $entityName = $input->getArgument(static::ARG_ENTITY_NAME_NAME);
+        $groupName = $input->getArgument(static::ARG_GROUP_NAME_NAME);
+        $architectureName = $input->getArgument(
+            static::ARG_ARCHITECTURE_NAME_NAME
+        );
+
+        (new UnitTestEntityFileCreator(
+            new UnitTestEntityFilePathGenerator($entityName, $groupName),
+            new UnitTestEntityFileContentGenerator(
+                $entityName,
+                $architectureName,
+            ),
+            $entityName,
+            $groupName,
+            $architectureName,
+        ))->create();
+
+        $output->writeln('File created successfully.');
+
+        return 0;
     }
 }
