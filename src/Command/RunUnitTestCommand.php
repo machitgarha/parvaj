@@ -2,9 +2,8 @@
 
 namespace MAChitgarha\Parvaj\Command;
 
-use MAChitgarha\Parvaj\FileInfo\AbstractEntityFileInfo;
-use MAChitgarha\Parvaj\FileInfo\SourceEntityFileInfo;
-use MAChitgarha\Parvaj\FileInfo\UnitTestEntityFileInfo;
+use MAChitgarha\Parvaj\DependencyResolver;
+use MAChitgarha\Parvaj\UnitTestUnitFilePathGenerator;
 
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputOption;
@@ -79,49 +78,58 @@ class RunUnitTestCommand extends Command
         ;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
-    {
-        [$testEntityName, $workdir, $simulationOptions] = [
-            $input->getArgument(static::ARG_TEST_ENTITY_NAME_NAME),
-            $input->getOption(static::OPT_WORKDIR_NAME),
-            $input->getOption(static::OPT_SIMULATION_OPTIONS_NAME),
-        ];
+    protected function execute(
+        InputInterface $input,
+        OutputInterface $output
+    ): int {
+        $testEntityName = $input->getArgument(
+            static::ARG_TEST_ENTITY_NAME_NAME
+        );
+        $workdir = $input->getOption(
+            static::OPT_WORKDIR_NAME
+        );
+        $simulationOptions = $input->getOption(
+            static::OPT_SIMULATION_OPTIONS_NAME
+        );
 
-        $entityFilePaths = getAllDependenciesPath($testEntityName, false);
+        $dependencyResolver = new DependencyResolver(
+            $unitTestEntityPath = UnitTestUnitFilePathGenerator::locate(
+                $testEntityName
+            )
+        );
 
-        try {
-            ["ghdl" => $ghdlExec, "gtkwave" => $gtkwaveExec] = findNecessaryCommands();
+        $unitFilePaths = \iterator_to_array(
+            $$dependencyResolver->resolve()
+        );
 
-            if (!\is_dir($workdir) && !\mkdir($workdir)) {
-                throw new \Exception("Cannot create '$workdir' directory.");
-            }
+        ["ghdl" => $ghdlExec, "gtkwave" => $gtkwaveExec] =
+            self::findNecessaryCommands();
 
-            $output->writeln("Analyzing files...");
-            analyzeEntityFiles($ghdlExec, $entityFilePaths, $workdir);
+        self::makeWorkdir($workdir);
 
-            $waveformFilePath = getWaveformFilePath(
-                (new UnitTestEntityFileInfo($testEntityName))->findPath()->getPath()
-            );
+        $output->writeln("Analyzing files...");
+        self::analyzeEntityFiles($ghdlExec, $unitFilePaths, $workdir);
 
-            $output->writeln("Elab-running the test...");
-            elabRun($ghdlExec, $testEntityName, $waveformFilePath, $workdir, $simulationOptions);
+        $waveformFilePath = self::getWaveformFilePath($unitTestEntityPath);
 
-            $output->writeln("Opening the results in GtkWave...");
-            openGtkWave($gtkwaveExec, $waveformFilePath);
+        $output->writeln("Elab-running the test...");
+        self::elabRun(
+            $ghdlExec,
+            $testEntityName,
+            $waveformFilePath,
+            $workdir,
+            $simulationOptions
+        );
 
-            exit(0);
-        } catch (\Exception $e) {
-            printLine([
-                "",
-                "Error:",
-                $e->getMessage(),
-            ]);
-            exit(1);
-        }
+        $output->writeln("Opening the results in GtkWave...");
+        openGtkWave($gtkwaveExec, $waveformFilePath);
+
+        return 0;
     }
 
-    protected function getWaveformFilePath(string $testEntityFilePath)
-    {
+    private static function getWaveformFilePath(
+        string $testEntityFilePath
+    ): string {
         return \dirname($testEntityFilePath) . "/" . \str_replace(
             AbstractEntityFileInfo::VHDL_EXTENSION,
             self::WAVEFORM_FILE_EXTENSION,
@@ -129,7 +137,7 @@ class RunUnitTestCommand extends Command
         );
     }
 
-    protected function runProcess(array $shellArgs): void
+    private static function runProcess(array $shellArgs): void
     {
         // Never end a process, until the user kills it himself
         $process = new Process($shellArgs, null, null, null, null);
@@ -143,7 +151,7 @@ class RunUnitTestCommand extends Command
         }
     }
 
-    protected function findNecessaryCommands(): array
+    private static function findNecessaryCommands(): array
     {
         $executableFinder = new ExecutableFinder();
 
@@ -159,16 +167,23 @@ class RunUnitTestCommand extends Command
         return $paths;
     }
 
-    protected function analyzeEntityFiles(
+    private static function makeWorkdir(string $workdirPath): void
+    {
+        if (!\is_dir($workdirPath) && !@\mkdir($workdirPath, 0755, true)) {
+            throw new \Exception("Unable to create '$workdirPath' directory.");
+        }
+    }
+
+    private static function function analyzeEntityFiles(
         string $ghdlExec,
-        array $entityFilePaths,
+        array $unitFilePaths,
         string $workdir
     ): void {
         // TODO: Allow the client to choose VHDL version
-        runProcess([$ghdlExec, "-a", "--workdir=$workdir", ...$entityFilePaths]);
+        runProcess([$ghdlExec, "-a", "--workdir=$workdir", ...$unitFilePaths]);
     }
 
-    protected function elabRun(
+    private static function elabRun(
         string $ghdlExec,
         string $testEntityName,
         string $outputWaveformFilePath,
@@ -184,8 +199,10 @@ class RunUnitTestCommand extends Command
         ]);
     }
 
-    protected function openGtkWave(string $gtkwaveExec, string $waveformFilePath)
-    {
+    private static function openGtkWave(
+        string $gtkwaveExec,
+        string $waveformFilePath
+    ): void {
         runProcess([$gtkwaveExec, $waveformFilePath]);
     }
 }
