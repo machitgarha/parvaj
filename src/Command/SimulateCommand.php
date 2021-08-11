@@ -41,6 +41,12 @@ class RunUnitTestCommand extends Command
         'GHDL.';
     protected const OPT_WORKDIR_DEFAULT = 'build/';
 
+    protected const OPT_WAVEFORM_NAME = 'waveform';
+    protected const OPT_WAVEFORM_DESCRIPTION =
+        'Which waveform format to be used for the output files. Possible ' .
+        'values are ghw and vcd. Case-sensitive, must be all lowercased.';
+    protected const OPT_WAVEFORM_DEFAULT = 'ghw';
+
     protected const OPT_OPTION_NAME = 'option';
     protected const OPT_OPTION_DESCRIPTION =
         'Simulation options passed to GHDL when running the test. Some ' . 'options must not be used, or you might get an error during the ' .
@@ -48,8 +54,6 @@ class RunUnitTestCommand extends Command
         'verbose, but for now, there must be exactly one per given option, ' .
         'or things should not work correctly. An example could be: ' .
         '--stop-time=3ns.';
-
-    private const WAVEFORM_FILE_EXTENSION = "ghw";
 
     protected function configure()
     {
@@ -75,6 +79,13 @@ class RunUnitTestCommand extends Command
                 static::OPT_WORKDIR_DEFAULT,
             )
             ->addOption(
+                static::OPT_WAVEFORM_NAME,
+                null,
+                InputOption::VALUE_REQUIRED,
+                static::OPT_WAVEFORM_DESCRIPTION,
+                static::OPT_WAVEFORM_DEFAULT,
+            )
+            ->addOption(
                 static::OPT_OPTION_NAME,
                 null,
                 InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
@@ -93,7 +104,10 @@ class RunUnitTestCommand extends Command
         $workdir = $input->getOption(
             static::OPT_WORKDIR_NAME
         );
-        $simulationOptions = $input->getOption(
+        $waveformType = $input->getOption(
+            static::OPT_WAVEFORM_NAME
+        );
+        $optionsArray = $input->getOption(
             static::OPT_OPTION_NAME
         );
 
@@ -115,7 +129,7 @@ class RunUnitTestCommand extends Command
         $output->writeln("Analyzing files...");
         self::analyzeEntityFiles($ghdlExec, $unitFilePaths, $workdir);
 
-        $waveformFilePath = self::getWaveformFilePath($unitTestEntityPath);
+        $waveformFilePath = self::generateWaveformFilePath($unitTestEntityPath);
 
         $output->writeln("Elab-running the test...");
         self::elabRun(
@@ -123,23 +137,14 @@ class RunUnitTestCommand extends Command
             $testEntityName,
             $waveformFilePath,
             $workdir,
-            $simulationOptions,
+            $waveformType,
+            $optionsArray,
         );
 
         $output->writeln("Opening the results in GtkWave...");
         self::openGtkWave($gtkwaveExec, $waveformFilePath);
 
         return 0;
-    }
-
-    private static function getWaveformFilePath(
-        string $testEntityFilePath
-    ): string {
-        return \dirname($testEntityFilePath) . "/" . \str_replace(
-            AbstractUnitFilePathGenerator::VHDL_EXTENSION,
-            self::WAVEFORM_FILE_EXTENSION,
-            \basename($testEntityFilePath)
-        );
     }
 
     private static function runProcess(array $shellArgs): void
@@ -188,17 +193,40 @@ class RunUnitTestCommand extends Command
         self::runProcess([$ghdlExec, "-a", "--workdir=$workdir", ...$unitFilePaths]);
     }
 
+    private static function generateWaveformFilePath(
+        string $testEntityFilePath,
+        string $waveformType
+    ): string {
+        return \str_replace(
+            AbstractUnitFilePathGenerator::VHDL_EXTENSION,
+            // TODO: Improve the decision, perhaps with a function?
+            $waveformType,
+            $testEntityFilePath,
+        );
+    }
+
     private static function elabRun(
         string $ghdlExec,
         string $testEntityName,
         string $outputWaveformFilePath,
         string $workdir,
-        array $simulationOptionsArr
+        string $waveformType,
+        array $options = []
     ): void {
+        if ($waveformType === 'ghw') {
+            $waveformOption = ["--wave=$outputWaveformFilePath"];
+        } elseif ($waveformType === 'vcd') {
+            $waveformOption = ["--vcd=$outputWaveformFilePath"];
+        } else {
+            throw new \RuntimeException(
+                "Invalid waveform given '$waveformType'"
+            );
+        }
+
         self::runProcess([
             $ghdlExec, "--elab-run", "--workdir=$workdir", "-o",
-            "$workdir/test-bench", "$testEntityName",
-            "--wave=$outputWaveformFilePath", ...$simulationOptionsArr,
+            "$workdir/$testEntityName", "$testEntityName", ...$waveformType,
+            ...$options,
         ]);
     }
 
