@@ -4,7 +4,7 @@ namespace MAChitgarha\Parvaj;
 
 use Webmozart\PathUtil\Path;
 
-abstract class AbstractFilePathGenerator
+abstract class AbstractUnitFilePathGenerator
 {
     public const VHDL_EXTENSION = 'vhd';
 
@@ -58,5 +58,32 @@ abstract class AbstractFilePathGenerator
         // TODO: Make this user-specified
         return \str_replace('_', '-', $this->entityName) . '.' .
             self::VHDL_EXTENSION;
+    }
+
+    public static function locate(string $unitName): string
+    {
+        $groupDirectoriesIterator = new \DirectoryIterator(
+            static::getOperatingDirectory()
+        );
+
+        foreach ($groupDirectoriesIterator as $groupDirectory) {
+            if (
+                !$item->isDot()
+                && $groupDirectory->isDir()
+            ) {
+                $unitPath = (new static(
+                    $unitName, $groupDirectory->getFilename()
+                ))->generate();
+
+                // Check if the entity we need exist in the current group or not
+                if (\file_exists($unitPath)) {
+                    return $unitPath;
+                }
+            }
+        }
+
+        throw new \RuntimeException(
+            "Cannot find path of entity '$unitName'"
+        );
     }
 }

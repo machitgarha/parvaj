@@ -31,7 +31,7 @@ class DependencyResolver
         foreach (
             self::extractDependencyUnitNames($currentUnitPath) as $depUnitName
         ) {
-            $depUnitPath = self::findSourceUnitPath($unitName);
+            $depUnitPath = SourceUnitFilePathGenerator::locate($depUnitName);
 
             // Prevent from infinite recursion
             if (\in_array($depUnitPath, $parentUnitPaths)) {
@@ -86,32 +86,5 @@ class DependencyResolver
         } else {
             yield from [];
         }
-    }
-
-    private static function findSourceUnitPath(string $unitName): string
-    {
-        $groupDirectoriesIterator = new \DirectoryIterator(
-            SourceUnitFilePathGenerator::getOperatingDirectory()
-        );
-
-        foreach ($groupDirectoriesIterator as $groupDirectory) {
-            if (
-                !$item->isDot()
-                && $groupDirectory->isDir()
-            ) {
-                // Check if the entity we need exist in the current group or not
-                if (\file_exists(
-                    $unitPath = (new SourceUnitFilePathGenerator(
-                        $unitName, $groupDirectory->getFilename()
-                    ))->generate()
-                )) {
-                    return $unitPath;
-                }
-            }
-        }
-
-        throw new \RuntimeException(
-            "Cannot find path of entity '$unitName'"
-        );
     }
 }
