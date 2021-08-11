@@ -47,6 +47,11 @@ class RunUnitTestCommand extends Command
         'values are ghw and vcd. Case-sensitive, must be all lowercased.';
     protected const OPT_WAVEFORM_DEFAULT = 'ghw';
 
+    protected const OPT_NO_O_NAME = 'no-o';
+    protected const OPT_NO_O_DESCRIPTION =
+        'Do not use -o option. This pollutes the project directory, but it ' .
+        'useful in the case of GHDL not detecting the option.';
+
     protected const OPT_OPTION_NAME = 'option';
     protected const OPT_OPTION_DESCRIPTION =
         'Simulation options passed to GHDL when running the test. Some ' . 'options must not be used, or you might get an error during the ' .
@@ -86,6 +91,12 @@ class RunUnitTestCommand extends Command
                 static::OPT_WAVEFORM_DEFAULT,
             )
             ->addOption(
+                static::OPT_NO_O_NAME,
+                null,
+                InputOption::VALUE_NONE,
+                static::OPT_NO_O_DESCRIPTION,
+            )
+            ->addOption(
                 static::OPT_OPTION_NAME,
                 null,
                 InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
@@ -106,6 +117,9 @@ class RunUnitTestCommand extends Command
         );
         $waveformType = $input->getOption(
             static::OPT_WAVEFORM_NAME
+        );
+        $noO = $input->getOption(
+            static::OPT_NO_O_NAME
         );
         $optionsArray = $input->getOption(
             static::OPT_OPTION_NAME
@@ -138,6 +152,7 @@ class RunUnitTestCommand extends Command
             $waveformFilePath,
             $workdir,
             $waveformType,
+            $noO,
             $optionsArray,
         );
 
@@ -211,6 +226,7 @@ class RunUnitTestCommand extends Command
         string $outputWaveformFilePath,
         string $workdir,
         string $waveformType,
+        bool $noO,
         array $options = []
     ): void {
         if ($waveformType === 'ghw') {
@@ -223,10 +239,14 @@ class RunUnitTestCommand extends Command
             );
         }
 
+        $oOption = ['-o', "$workdir/$testEntityName"];
+        if (!$noO) {
+            $oOption = [];
+        }
+
         self::runProcess([
-            $ghdlExec, "--elab-run", "--workdir=$workdir", "-o",
-            "$workdir/$testEntityName", "$testEntityName", ...$waveformType,
-            ...$options,
+            $ghdlExec, "--elab-run", "--workdir=$workdir", ...$oOption,
+            "$testEntityName", ...$waveformType, ...$options,
         ]);
     }
 
