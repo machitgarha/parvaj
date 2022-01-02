@@ -8,7 +8,7 @@ use MAChitgarha\Parvaj\Command\SimulateCommand;
 class Application extends \Symfony\Component\Console\Application
 {
     public const NAME = 'Parvaj';
-    public const VERSION = '0.2.0-alpha.3';
+    public const VERSION = '0.2.0-beta.1';
 
     public function __construct()
     {

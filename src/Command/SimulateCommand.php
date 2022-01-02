@@ -133,9 +133,9 @@ class SimulateCommand extends Command
             )
         );
 
-        $unitFilePaths = \iterator_to_array(
+        $unitFilePaths = \array_unique(\iterator_to_array(
             $dependencyResolver->resolve(), false
-        );
+        ));
 
         ["ghdl" => $ghdlExec, "gtkwave" => $gtkwaveExec] =
             self::findNecessaryCommands();
