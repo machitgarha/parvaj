@@ -2,6 +2,9 @@
 
 namespace MAChitgarha\Parvaj\File\Creator;
 
+use MAChitgarha\Parvaj\File\PathGenerator\UnitTestFilePath;
+use MAChitgarha\Parvaj\File\ContentGenerator\UnitTestEntityContent;
+
 class UnitTestEntityFile extends AbstractEntityFile
 {
     public function __construct(

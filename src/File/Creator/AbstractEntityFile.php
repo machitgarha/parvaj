@@ -2,6 +2,9 @@
 
 namespace MAChitgarha\Parvaj\File\Creator;
 
+use MAChitgarha\Parvaj\File\PathGenerator\AbstractFilePath;
+use MAChitgarha\Parvaj\File\ContentGenerator\AbstractEntityContent;
+
 abstract class AbstractEntityFile
 {
     private AbstractFilePath $filePathGenerator;
