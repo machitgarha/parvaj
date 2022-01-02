@@ -1,25 +1,33 @@
 # Parvaj
 
-Automation scripts helping you working with GHDL and GtkWave on a VHDL code. You can create main entities, make tests for them and test them automagically.
+![Version](https://img.shields.io/github/v/tag/machitgarha/parvaj?color=purple&label=Version&style=flat-square)
+
+Automation scripts helping you working with GHDL and GtkWave, when writing VHDL code. Create source entities, create tests and run them with ease.
 
 ## Why?
 
--   Automate the process of simulation (i.e. compilation) and testing. Powerfully. It should drastically increase development speed.
+-   Automate the process of simulation and testing. Powerfully. It should drastically increase development speed.
 
--   It forces everyone in the project to implicitly follow the same standards (However, changing the standards is not possible for now, e.g. naming conventions).
+-   It forces everyone in the project to implicitly follow the same standards (changing the standards is not possible for now, however, including naming conventions).
 
 ## Requirements
 
-You must have the following stuff installed:
+You must have the following installed:
 
 -   PHP 7.4+
 -   Composer
 -   GHDL
 -   GtkWave
 
+If you have a Linux distribution, then installing all these should be fairly easy. For example, on Fedora, you could simply do:
+
+```bash
+sudo dnf install php composer ghdl gtkwave
+```
+
 ## Getting It
 
-The easiest way to include it in your project is to add it as a Git submodule:
+The easiest way to use it in your project is to add it as a Git submodule:
 
 ```bash
 git submodule add https://github.com/machitgarha/parvaj scripts/
@@ -34,42 +42,59 @@ composer install
 
 That's it!
 
-**Note**: Using it as a Composer package is not supported (and would not supported).
-
 ## How to Use It?
 
-There are two scripts for two different purposes:
-
-1.  `create-entity.php`: Creates entities in a standard way. There are two types: Source entities and unit-test ones (their name suggest what they are).
-
-2.  `start-unit-test.php`: Unit-tests a specific entity, with the help of a unit-test entity. It first invokes GHDL to make things ready (i.e. auto-analysis, elaborate and run the requested entity and the required ones), and then represents the results in GtkWave.
-
-For running a script, do:
+Suppose you have it under `scripts` directory. Running Parvaj should be easy:
 
 ```bash
-# You can omit php if you're on Linux
-php ./scripts/create-entity.php <...args>
+./scripts/bin/parvaj --help
 ```
 
-### Usage Guide
+There are two commands available:
 
-For knowing how a script works or what arguments it gets, you can use the help command included in both scripts. For example:
+1.  `create-entity`: Create an entity, either a source or a unit-test one (their name suggest what they are), and make some basic (but incomplete) contents in it. Instead of creating entities manually, you must use this command, otherwise the simulation functionality won't work (because it uses rules to find source and unit-test files).
+
+2.  `simulate`: Simulates a specific unit-test entity. It first invokes GHDL to make things ready (i.e. auto-analysis and elab-running), and then represents the results in GtkWave.
+
+### Examples
+
+-   Create a source entity named `multiplexer_2_to_1` in `src/multiplexers/multiplexer-2-to-1.vhd`:
+
+    ```bash
+    ./scripts/bin/parvaj create-entity source multiplexer_2_to_1 multiplexers
+    ```
+-   Runs simulation of the unit-test entity named `test_multiplexer_2_to_1` (by auto-finding the correspending file):
+
+    ```bash
+    ./scripts/bin/parvaj simulate test_multiplexer_2_to_1
+    ```
+
+### Helps Everywhere!
+
+You can always use `--help` in order to see how a command works:
 
 ```bash
-$ php ./scripts/create-entity.php help
-
-Usage:
-    ./scripts/create-entity.php <entity-type> <entity-name> <group-name> [<architecture-name>]
-
-...
+./scripts/bin/parvaj simulate --help
 ```
-
-Unfortunately, there is no documentation available for these scripts, except the helps themselves (which should be enough in most cases).
 
 ## Platform Support
 
-Everything should work fine on Linux-based platforms, and generally Unix-like ones (e.g. OS X). Even further, the code will probably run on Windows as well without any problems, but not properly tested.
+Everything should work fine on Linux-based platforms, and generally Unix-like ones (e.g. OS X). The code should run on Windows as well, but not properly tested.
 
-## ToDo
+## Contributions? Of Course!
 
--   Make it a lightweight Symfony application.
+Feel free to open an issue or create a pull request. You can also consider the to-do list below.
+
+But hey, contribution can be simpler than that: Recommend Parvaj to your friends, if you liked it!
+
+### Donations
+
+If you live in Iran, you can make donations [here](https://coffeebede.ir/buycoffee/machitgarha). Otherwise, open an issue telling why you cannot donate from the outside. :)
+
+### To-Do
+
+-   Distribute in other probably-better formats, like Phar or AppImage. With Phar, users would get rid of installing Composer (particularly useful for Windows users). Having an AppImage format could be even better: An average Linux user does not need to install anything, and everything (even GHDL or GtkWave) could be bundled into the package. 
+
+## License
+
+This is free software. The project is licensed under [AGPL3](./LICENSE.md).
