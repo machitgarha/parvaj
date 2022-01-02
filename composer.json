@@ -9,5 +9,8 @@
         "psr-4": {
             "MAChitgarha\\Parvaj\\": "src"
         }
+    },
+    "require-dev": {
+        "phan/phan": "^5.3"
     }
 }
