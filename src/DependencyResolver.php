@@ -2,6 +2,7 @@
 
 namespace MAChitgarha\Parvaj;
 
+use MAChitgarha\Parvaj\File\PathGenerator\SourceFilePath;
 use MAChitgarha\Parvaj\Util\File;
 
 class DependencyResolver
@@ -18,67 +19,67 @@ class DependencyResolver
 
     public function resolve(): \Generator
     {
-        yield from self::findDependencyUnitPathsRecursive(
+        yield from self::findDependencyPathsRecursive(
             $this->mainUnitTestFilePath,
             [$this->mainUnitTestFilePath]
         );
     }
 
-    private static function findDependencyUnitPathsRecursive(
-        string $currentUnitPath,
-        array $parentUnitPaths
+    private static function findDependencyPathsRecursive(
+        string $currentPath,
+        array $parentPaths
     ): \Generator {
         foreach (
-            self::extractDependencyUnitNames($currentUnitPath) as $depUnitName
+            self::extractDependencyNames($currentPath) as $dependencyName
         ) {
-            $depUnitPath = SourceFilePath::locate($depUnitName);
+            $dependencyPath = SourceFilePath::locate($dependencyName);
 
             // Prevent from infinite recursion
-            if (\in_array($depUnitPath, $parentUnitPaths)) {
-                yield $depUnitPath;
+            if (\in_array($dependencyPath, $parentPaths)) {
+                yield $dependencyPath;
             } else {
-                yield from self::findDependencyUnitPathsRecursive(
-                    $depUnitPath,
-                    [...$parentUnitPaths, $depUnitPath]
+                yield from self::findDependencyPathsRecursive(
+                    $dependencyPath,
+                    [...$parentPaths, $dependencyPath]
                 );
             }
         }
 
-        yield $currentUnitPath;
+        yield $currentPath;
     }
 
-    private static function extractDependencyUnitNames(
-        string $unitPath
+    private static function extractDependencyNames(
+        string $filePath
     ): \Generator {
-        $unitContents = File::read($unitPath);
+        $fileContents = File::read($filePath);
 
-        yield from self::extractDependencyComponentNames($unitContents);
-        yield from self::extractDependencyPackageNames($unitContents);
+        yield from self::extractDependencyComponentNames($fileContents);
+        yield from self::extractDependencyPackageNames($fileContents);
     }
 
     private static function extractDependencyComponentNames(
-        string $unitContents
+        string $fileContents
     ): \Generator {
-        yield from self::extractDependencyUnitUsingRegex(
-            $unitContents,
+        yield from self::extractDependencyUsingRegex(
+            $fileContents,
             self::REGEX_COMPONENT_FINDER
         );
     }
 
     private static function extractDependencyPackageNames(
-        string $unitContents
+        string $fileContents
     ): \Generator {
-        yield from self::extractDependencyUnitUsingRegex(
-            $unitContents,
+        yield from self::extractDependencyUsingRegex(
+            $fileContents,
             self::REGEX_PACKAGE_FINDER
         );
     }
 
-    private static function extractDependencyUnitUsingRegex(
-        string $unitContents,
+    private static function extractDependencyUsingRegex(
+        string $fileContents,
         string $regex
     ): \Generator {
-        if (preg_match_all($regex, $unitContents, $matches)) {
+        if (preg_match_all($regex, $fileContents, $matches)) {
             yield from $matches[1];
         } else {
             yield from [];

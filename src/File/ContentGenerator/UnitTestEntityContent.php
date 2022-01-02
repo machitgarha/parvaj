@@ -2,8 +2,7 @@
 
 namespace MAChitgarha\Parvaj\File\ContentGenerator;
 
-class UnitTestEntityContent extends
-    UnitTestEntityContent
+class UnitTestEntityContent extends AbstractEntityContent
 {
     protected function getTemplateFileName(): string
     {

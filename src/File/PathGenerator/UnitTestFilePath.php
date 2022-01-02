@@ -4,7 +4,7 @@ namespace MAChitgarha\Parvaj\File\PathGenerator;
 
 use Webmozart\PathUtil\Path;
 
-class UnitTestFilePath extends UnitTestFilePath
+class UnitTestFilePath extends AbstractFilePath
 {
     protected static function getOperatingDirectory(): string
     {
