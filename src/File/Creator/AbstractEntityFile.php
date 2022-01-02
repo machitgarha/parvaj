@@ -1,19 +1,19 @@
 <?php
 
-namespace MAChitgarha\Parvaj;
+namespace MAChitgarha\Parvaj\File\Creator;
 
-abstract class AbstractEntityFileCreator
+abstract class AbstractEntityFile
 {
-    private AbstractUnitFilePathGenerator $filePathGenerator;
-    private AbstractEntityFileContentGenerator $contentGenerator;
+    private AbstractFilePath $filePathGenerator;
+    private AbstractEntityContent $contentGenerator;
 
     private string $entityName;
     private string $groupName;
     private string $architectureName;
 
     public function __construct(
-        AbstractUnitFilePathGenerator $filePathGenerator,
-        AbstractEntityFileContentGenerator $contentGenerator,
+        AbstractFilePath $filePathGenerator,
+        AbstractEntityContent $contentGenerator,
         string $entityName,
         string $groupName,
         string $architectureName

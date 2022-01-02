@@ -2,12 +2,12 @@
 
 namespace MAChitgarha\Parvaj\Command;
 
-use MAChitgarha\Parvaj\SourceEntityFileCreator;
-use MAChitgarha\Parvaj\UnitTestEntityFileCreator;
-use MAChitgarha\Parvaj\SourceUnitFilePathGenerator;
-use MAChitgarha\Parvaj\UnitTestUnitFilePathGenerator;
-use MAChitgarha\Parvaj\SourceEntityFileContentGenerator;
-use MAChitgarha\Parvaj\UnitTestEntityFileContentGenerator;
+use MAChitgarha\Parvaj\File\Creator\SourceEntityFile;
+use MAChitgarha\Parvaj\File\Creator\UnitTestEntityFile;
+use MAChitgarha\Parvaj\File\PathGenerator\SourceFilePath;
+use MAChitgarha\Parvaj\File\PathGenerator\UnitTestFilePath;
+use MAChitgarha\Parvaj\File\ContentGenerator\SourceEntityContent;
+use MAChitgarha\Parvaj\File\ContentGenerator\UnitTestEntityContent;
 
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -123,9 +123,9 @@ class CreateEntityCommand extends Command
             static::ARG_ARCHITECTURE_NAME_NAME
         );
 
-        (new SourceEntityFileCreator(
-            new SourceUnitFilePathGenerator($entityName, $groupName),
-            new SourceEntityFileContentGenerator(
+        (new SourceEntityFile(
+            new SourceFilePath($entityName, $groupName),
+            new SourceEntityContent(
                 $entityName,
                 $architectureName,
             ),
@@ -149,9 +149,9 @@ class CreateEntityCommand extends Command
             static::ARG_ARCHITECTURE_NAME_NAME
         );
 
-        (new UnitTestEntityFileCreator(
-            new UnitTestUnitFilePathGenerator($entityName, $groupName),
-            new UnitTestEntityFileContentGenerator(
+        (new UnitTestEntityFile(
+            new UnitTestFilePath($entityName, $groupName),
+            new UnitTestEntityContent(
                 $entityName,
                 $architectureName,
             ),

@@ -31,7 +31,7 @@ class DependencyResolver
         foreach (
             self::extractDependencyUnitNames($currentUnitPath) as $depUnitName
         ) {
-            $depUnitPath = SourceUnitFilePathGenerator::locate($depUnitName);
+            $depUnitPath = SourceFilePath::locate($depUnitName);
 
             // Prevent from infinite recursion
             if (\in_array($depUnitPath, $parentUnitPaths)) {
@@ -39,10 +39,7 @@ class DependencyResolver
             } else {
                 yield from self::findDependencyUnitPathsRecursive(
                     $depUnitPath,
-                    [
-                        ...$parentUnitPaths,
-                        $depUnitPath,
-                    ]
+                    [...$parentUnitPaths, $depUnitPath]
                 );
             }
         }

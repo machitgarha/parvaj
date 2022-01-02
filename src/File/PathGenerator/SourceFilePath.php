@@ -1,8 +1,8 @@
 <?php
 
-namespace MAChitgarha\Parvaj;
+namespace MAChitgarha\Parvaj\File\PathGenerator;
 
-class SourceUnitFilePathGenerator extends AbstractUnitFilePathGenerator
+class SourceFilePath extends SourceFilePath
 {
     protected static function getOperatingDirectory(): string
     {

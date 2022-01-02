@@ -1,10 +1,10 @@
 <?php
 
-namespace MAChitgarha\Parvaj;
+namespace MAChitgarha\Parvaj\File\PathGenerator;
 
 use Webmozart\PathUtil\Path;
 
-class UnitTestUnitFilePathGenerator extends AbstractUnitFilePathGenerator
+class UnitTestFilePath extends UnitTestFilePath
 {
     protected static function getOperatingDirectory(): string
     {

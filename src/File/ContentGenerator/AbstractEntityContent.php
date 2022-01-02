@@ -1,11 +1,11 @@
 <?php
 
-namespace MAChitgarha\Parvaj;
+namespace MAChitgarha\Parvaj\File\ContentGenerator;
 
 use Twig\Loader\FilesystemLoader as TwigFilesystemLoader;
 use Twig\Environment as TwigEnvironment;
 
-abstract class AbstractEntityFileContentGenerator
+abstract class AbstractEntityContent
 {
     private const TEMPLATES_PATH = __DIR__ . '/../templates/entity-creation';
 

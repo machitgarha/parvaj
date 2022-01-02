@@ -3,8 +3,8 @@
 namespace MAChitgarha\Parvaj\Command;
 
 use MAChitgarha\Parvaj\DependencyResolver;
-use MAChitgarha\Parvaj\AbstractUnitFilePathGenerator;
-use MAChitgarha\Parvaj\UnitTestUnitFilePathGenerator;
+use MAChitgarha\Parvaj\File\PathGenerator\AbstractFilePath;
+use MAChitgarha\Parvaj\File\PathGenerator\UnitTestFilePath;
 
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputOption;
@@ -128,7 +128,7 @@ class SimulateCommand extends Command
         );
 
         $dependencyResolver = new DependencyResolver(
-            $unitTestEntityPath = UnitTestUnitFilePathGenerator::locate(
+            $unitTestEntityPath = UnitTestFilePath::locate(
                 $testEntityName
             )
         );
@@ -220,7 +220,7 @@ class SimulateCommand extends Command
         string $waveformType
     ): string {
         return \str_replace(
-            AbstractUnitFilePathGenerator::VHDL_EXTENSION,
+            AbstractFilePath::VHDL_EXTENSION,
             // TODO: Improve the decision, perhaps with a function?
             $waveformType,
             $testEntityFilePath,

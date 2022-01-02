@@ -1,10 +1,10 @@
 <?php
 
-namespace MAChitgarha\Parvaj;
+namespace MAChitgarha\Parvaj\File\PathGenerator;
 
 use Webmozart\PathUtil\Path;
 
-abstract class AbstractUnitFilePathGenerator
+abstract class AbstractFilePath
 {
     public const VHDL_EXTENSION = 'vhd';
 

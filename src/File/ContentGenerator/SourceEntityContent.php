@@ -1,9 +1,9 @@
 <?php
 
-namespace MAChitgarha\Parvaj;
+namespace MAChitgarha\Parvaj\File\ContentGenerator;
 
-class SourceEntityFileContentGenerator extends
-    AbstractEntityFileContentGenerator
+class SourceEntityContent extends
+    SourceEntityContent
 {
     protected function getTemplateFileName(): string
     {

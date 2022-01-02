@@ -1,12 +1,12 @@
 <?php
 
-namespace MAChitgarha\Parvaj;
+namespace MAChitgarha\Parvaj\File\Creator;
 
-class UnitTestEntityFileCreator extends AbstractEntityFileCreator
+class SourceEntityFile extends AbstractEntityFile
 {
     public function __construct(
-        UnitTestUnitFilePathGenerator $filePathGenerator,
-        UnitTestEntityFileContentGenerator $contentGenerator,
+        SourceFilePath $filePathGenerator,
+        SourceEntityContent $contentGenerator,
         string $entityName,
         string $groupName,
         string $architectureName
