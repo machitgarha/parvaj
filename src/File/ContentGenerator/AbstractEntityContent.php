@@ -7,7 +7,8 @@ use Twig\Environment as TwigEnvironment;
 
 abstract class AbstractEntityContent
 {
-    private const TEMPLATES_PATH = __DIR__ . '/../templates/entity-creation';
+    private const TEMPLATES_PATH =
+        __DIR__ . '/../../../templates/entity-creation';
 
     private string $entityName;
     private string $architectureName;
