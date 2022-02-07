@@ -82,7 +82,7 @@ class DependencyResolver
         if (preg_match_all($regex, $fileContents, $matches)) {
             yield from $matches[1];
         } else {
-            yield;
+            yield from [];
         }
     }
 }
