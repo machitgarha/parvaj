@@ -2,7 +2,7 @@
 
 namespace MAChitgarha\Parvaj\File\PathGenerator;
 
-use Webmozart\PathUtil\Path;
+use Symfony\Component\Filesystem\Path;
 
 abstract class AbstractFilePath
 {
