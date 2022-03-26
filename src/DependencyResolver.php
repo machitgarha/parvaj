@@ -3,7 +3,6 @@
 namespace MAChitgarha\Parvaj;
 
 use MAChitgarha\Parvaj\DependencyResolver\Regex;
-use MAChitgarha\Parvaj\Util\File;
 
 class DependencyResolver
 {
@@ -55,7 +54,7 @@ class DependencyResolver
     private static function extractDependencyNames(
         string $filePath
     ): \Generator {
-        $fileContents = File::read($filePath);
+        $fileContents = \file_get_contents($filePath);
 
         yield from self::extractDependencyComponentNames($fileContents);
         yield from self::extractDependencyPackageNames($fileContents);
