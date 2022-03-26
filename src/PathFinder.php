@@ -63,7 +63,7 @@ class PathFinder
      */
     public function __construct(string $rootPath)
     {
-        $this->rootPath = $rootPath;
+        $this->rootPath = \realpath($rootPath);
         $this->cache = self::makeCache($rootPath);
     }
 
