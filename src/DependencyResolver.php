@@ -6,12 +6,9 @@ use MAChitgarha\Parvaj\DependencyResolver\Regex;
 
 class DependencyResolver
 {
-    private PathFinder $pathFinder;
-
-    public function __construct()
-    {
-        $this->pathFinder = new PathFinder(".");
-    }
+    public function __construct(
+        private PathFinder $pathFinder,
+    ) {}
 
     /**
      * Returns the list of all dependencies, in order.

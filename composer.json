@@ -1,5 +1,6 @@
 {
     "require": {
+        "php": "^8.0",
         "symfony/process": "^5.2",
         "symfony/console": "^5.3",
         "symfony/cache": "^6.0",

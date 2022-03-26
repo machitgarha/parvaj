@@ -2,6 +2,7 @@
 
 namespace MAChitgarha\Parvaj\Command;
 
+use MAChitgarha\Parvaj\PathFinder;
 use MAChitgarha\Parvaj\DependencyResolver;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputOption;
@@ -122,7 +123,9 @@ class SimulateCommand extends Command
             static::OPT_OPTION_NAME
         );
 
-        $unitFilePaths = (new DependencyResolver())->resolve($testEntityName);
+        $pathFinder = new PathFinder(".");
+        $unitFilePaths = (new DependencyResolver($pathFinder))
+            ->resolve($testEntityName);
 
         ["ghdl" => $ghdlExec, "gtkwave" => $gtkwaveExec] =
             self::findNecessaryCommands();
