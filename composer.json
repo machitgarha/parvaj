@@ -2,7 +2,6 @@
     "require": {
         "symfony/process": "^5.2",
         "symfony/console": "^5.3",
-        "twig/twig": "^3.3",
         "symfony/cache": "^6.0",
         "symfony/filesystem": "^5.4",
         "machitgarha/phirs": "^0.1.0"

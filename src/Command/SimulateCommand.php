@@ -17,12 +17,12 @@ use Symfony\Component\Filesystem\Path;
 
 class SimulateCommand extends Command
 {
-    protected const NAME = 'simulate';
-    protected const DESCRIPTION = <<<'DESCRIPTION'
+    protected const NAME = "simulate";
+    protected const DESCRIPTION = <<<"DESCRIPTION"
         Simulates a unit-test entity.
         DESCRIPTION;
     // TODO: Add an example
-    protected const HELP = <<<'HELP'
+    protected const HELP = <<<"HELP"
         Runs a simulation for a particular unit-test entity.
 
         Analyzes all needed source unit files by resolving all dependencies,
@@ -31,34 +31,34 @@ class SimulateCommand extends Command
         waveform visually in a GtkWave window.
         HELP;
 
-    protected const ARG_TEST_ENTITY_NAME_NAME = 'test-entity-name';
+    protected const ARG_TEST_ENTITY_NAME_NAME = "test-entity-name";
     protected const ARG_TEST_ENTITY_NAME_DESCRIPTION =
-        'The name of the unit-test entity.';
+        "The name of the unit-test entity.";
 
-    protected const OPT_WORKDIR_NAME = 'workdir';
+    protected const OPT_WORKDIR_NAME = "workdir";
     protected const OPT_WORKDIR_DESCRIPTION =
-        'Where temporary files live is the working directory (e.g. object ' . 'files). You can consider it the value of --workdir option passed to ' .
-        'GHDL.';
-    protected const OPT_WORKDIR_DEFAULT = 'build/';
+        "Where temporary files live is the working directory (e.g. object " . "files). You can consider it the value of --workdir option passed to " .
+        "GHDL.";
+    protected const OPT_WORKDIR_DEFAULT = "build/";
 
-    protected const OPT_WAVEFORM_NAME = 'waveform';
+    protected const OPT_WAVEFORM_NAME = "waveform";
     protected const OPT_WAVEFORM_DESCRIPTION =
-        'Which waveform format to be used for the output files. Possible ' .
-        'values are ghw and vcd. Case-sensitive, must be all lowercased.';
-    protected const OPT_WAVEFORM_DEFAULT = 'ghw';
+        "Which waveform format to be used for the output files. Possible " .
+        "values are ghw and vcd. Case-sensitive, must be all lowercased.";
+    protected const OPT_WAVEFORM_DEFAULT = "ghw";
 
-    protected const OPT_NO_O_NAME = 'no-o';
+    protected const OPT_NO_O_NAME = "no-o";
     protected const OPT_NO_O_DESCRIPTION =
-        'Do not use -o option. This pollutes the project directory, but it ' .
-        'useful in the case of GHDL not detecting the option.';
+        "Do not use -o option. This pollutes the project directory, but it " .
+        "useful in the case of GHDL not detecting the option.";
 
-    protected const OPT_OPTION_NAME = 'option';
+    protected const OPT_OPTION_NAME = "option";
     protected const OPT_OPTION_DESCRIPTION =
-        'Simulation options passed to GHDL when running the test. Some ' . 'options must not be used, or you might get an error during the ' .
-        'process, including --wave, --workdir and -o. It may make seems too ' .
-        'verbose, but for now, there must be exactly one per given option, ' .
-        'or things should not work correctly. An example could be: ' .
-        '--stop-time=3ns.';
+        "Simulation options passed to GHDL when running the test. Some " . "options must not be used, or you might get an error during the " .
+        "process, including --wave, --workdir and -o. It may make seems too " .
+        "verbose, but for now, there must be exactly one per given option, " .
+        "or things should not work correctly. An example could be: " .
+        "--stop-time=3ns.";
 
     protected function configure()
     {
@@ -231,9 +231,9 @@ class SimulateCommand extends Command
         bool $noO,
         array $options
     ): void {
-        if ($waveformType === 'ghw') {
+        if ($waveformType === "ghw") {
             $waveformOption = ["--wave=$outputWaveformFilePath"];
-        } elseif ($waveformType === 'vcd') {
+        } elseif ($waveformType === "vcd") {
             $waveformOption = ["--vcd=$outputWaveformFilePath"];
         } else {
             throw new \RuntimeException(
@@ -241,7 +241,7 @@ class SimulateCommand extends Command
             );
         }
 
-        $oOption = ['-o', Path::join($workdir, $testEntityName)];
+        $oOption = ["-o", Path::join($workdir, $testEntityName)];
         if ($noO) {
             $oOption = [];
         }
