@@ -2,10 +2,10 @@
 
 namespace MAChitgarha\Parvaj\Command;
 
+use MAChitgarha\Parvaj\PathFinder;
 use MAChitgarha\Parvaj\DependencyResolver;
 use MAChitgarha\Parvaj\File\PathGenerator\AbstractFilePath;
 use MAChitgarha\Parvaj\File\PathGenerator\UnitTestFilePath;
-
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputArgument;
@@ -126,14 +126,11 @@ class SimulateCommand extends Command
         );
 
         $dependencyResolver = new DependencyResolver(
-            $unitTestEntityPath = UnitTestFilePath::locate(
-                $testEntityName
-            )
+            $testEntityName,
+            $pathFinder = new PathFinder(".")
         );
 
-        $unitFilePaths = \array_unique(\iterator_to_array(
-            $dependencyResolver->resolve(), false
-        ));
+        $unitFilePaths = $dependencyResolver->resolve();
 
         ["ghdl" => $ghdlExec, "gtkwave" => $gtkwaveExec] =
             self::findNecessaryCommands();

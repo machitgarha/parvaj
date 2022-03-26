@@ -1,4 +1,4 @@
-g<?php
+<?php
 
 namespace MAChitgarha\Parvaj;
 
@@ -8,21 +8,27 @@ use MAChitgarha\Parvaj\Util\File;
 class DependencyResolver
 {
     /**
-     * The path of the initial file. It should be a unit-test file.
+     * The path of the initial file, perhaps a unit-test file.
      */
     private string $initFilePath;
 
-    public function __construct(string $initFilePath)
+    private PathFinder $pathFinder;
+
+    public function __construct(string $initFilePath, PathFinder $pathFinder)
     {
         $this->initFilePath = $initFilePath;
+        $this->pathFinder = $pathFinder;
     }
 
-    public function resolve(): \Generator
+    public function resolve(): array
     {
-        yield from self::findDependencyPathsRecursive(
-            $this->initFilePath,
-            [$this->initFilePath]
-        );
+        return \array_unique(\iterator_to_array(
+            self::findDependencyPathsRecursive(
+                $this->initFilePath,
+                [$this->initFilePath]
+            ),
+            false
+        ));
     }
 
     private static function findDependencyPathsRecursive(
@@ -30,7 +36,7 @@ class DependencyResolver
         array $scannedPaths
     ): \Generator {
         foreach (self::extractDependencyNames($path) as $dependencyName) {
-            $dependencyPath = PathFinder::find($dependencyName);
+            $dependencyPath = $this->pathFinder->find($dependencyName);
 
             // Prevent from infinite recursion
             if (\in_array($dependencyPath, $scannedPaths)) {
