@@ -123,12 +123,7 @@ class SimulateCommand extends Command
             static::OPT_OPTION_NAME
         );
 
-        $dependencyResolver = new DependencyResolver(
-            $testEntityName,
-            $pathFinder = new PathFinder(".")
-        );
-
-        $unitFilePaths = $dependencyResolver->resolve();
+        $unitFilePaths = (new DependencyResolver())->resolve($testEntityName);
 
         ["ghdl" => $ghdlExec, "gtkwave" => $gtkwaveExec] =
             self::findNecessaryCommands();
@@ -139,7 +134,8 @@ class SimulateCommand extends Command
         self::analyzeEntityFiles($ghdlExec, $unitFilePaths, $workdir);
 
         $waveformFilePath = self::generateWaveformFilePath(
-            $unitTestEntityPath,
+            $workdir,
+            $testEntityName,
             $waveformType,
         );
 
@@ -209,15 +205,11 @@ class SimulateCommand extends Command
     }
 
     private static function generateWaveformFilePath(
-        string $testEntityFilePath,
+        string $workdir,
+        string $testEntityName,
         string $waveformType
     ): string {
-        return \str_replace(
-            AbstractFilePath::VHDL_EXTENSION,
-            // TODO: Improve the decision, perhaps with a function?
-            $waveformType,
-            $testEntityFilePath,
-        );
+        return Path::join($workdir, "$testEntityName.$waveformType");
     }
 
     private static function elabRun(

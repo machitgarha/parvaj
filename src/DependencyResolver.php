@@ -6,25 +6,27 @@ use MAChitgarha\Parvaj\DependencyResolver\Regex;
 
 class DependencyResolver
 {
-    /**
-     * The path of the initial file, perhaps a unit-test file.
-     */
-    private string $initFilePath;
-
     private PathFinder $pathFinder;
 
-    public function __construct(string $initFilePath, PathFinder $pathFinder)
+    public function __construct()
     {
-        $this->initFilePath = $initFilePath;
-        $this->pathFinder = $pathFinder;
+        $this->pathFinder = new PathFinder(".");
     }
 
-    public function resolve(): array
+    /**
+     * Returns the list of all dependencies, in order.
+     *
+     * @param string $initialUnit Name of the unit as the starting point.
+     * @return array The first element of the list means the most dependent, and
+     * the last one is the least (i.e. it is the path of the initial unit
+     * actually).
+     */
+    public function resolve(string $initialUnit): array
     {
         return \array_unique(\iterator_to_array(
             self::findDependencyPathsRecursive(
-                $this->initFilePath,
-                [$this->initFilePath]
+                $initialUnitPath = $this->pathFinder->find($initialUnit),
+                [$initialUnitPath]
             ),
             false
         ));
