@@ -4,8 +4,6 @@ namespace MAChitgarha\Parvaj\Command;
 
 use MAChitgarha\Parvaj\PathFinder;
 use MAChitgarha\Parvaj\DependencyResolver;
-use MAChitgarha\Parvaj\File\PathGenerator\AbstractFilePath;
-use MAChitgarha\Parvaj\File\PathGenerator\UnitTestFilePath;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputArgument;

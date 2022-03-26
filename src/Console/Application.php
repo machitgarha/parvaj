@@ -2,7 +2,6 @@
 
 namespace MAChitgarha\Parvaj\Console;
 
-use MAChitgarha\Parvaj\Command\CreateEntityCommand;
 use MAChitgarha\Parvaj\Command\SimulateCommand;
 
 class Application extends \Symfony\Component\Console\Application
@@ -20,7 +19,6 @@ class Application extends \Symfony\Component\Console\Application
     private function addAllCommands()
     {
         $this->addCommands([
-            new CreateEntityCommand(),
             new SimulateCommand(),
         ]);
     }
