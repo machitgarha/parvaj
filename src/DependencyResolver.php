@@ -1,4 +1,4 @@
-<?php
+g<?php
 
 namespace MAChitgarha\Parvaj;
 
@@ -8,7 +8,7 @@ use MAChitgarha\Parvaj\Util\File;
 class DependencyResolver
 {
     private const REGEX_COMPONENT_FINDER = '/component\s+([a-z0-9_]+)/is';
-    private const REGEX_PACKAGE_FINDER = '/use\s+work.(\w+).\w+;/is';
+    private const REGEX_PACKAGE_FINDER = '/use\s+work\.(\w+)\.\w+;/is';
 
     private string $mainUnitTestFilePath;
 
