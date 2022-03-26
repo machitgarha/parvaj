@@ -3,6 +3,7 @@
 namespace MAChitgarha\Parvaj;
 
 use SplFileObject;
+use DirectoryIterator;
 use FilesystemIterator;
 use RecursiveIteratorIterator;
 use RecursiveDirectoryIterator;
@@ -105,15 +106,13 @@ class PathFinder
         $path = $cacheItem->get()[Unit::PATH];
 
         if (\file_exists($path)) {
-            /*
-             * The file is expected to be readable, so otherwise an exception
-             * must be thrown.
-             */
-            $file = new SplFileObject($path, "r");
-
             return $this->findCachedWithExistentFile(
                 $cacheItem,
-                $file,
+                /*
+                 * The file is expected to be readable, so otherwise an
+                 * exception must be thrown.
+                 */
+                new SplFileObject($path, "r"),
                 $unitName,
             );
         } else {
@@ -129,7 +128,7 @@ class PathFinder
         $cache = $cacheItem->get();
         $path = $file->getPathname();
 
-        if (self::isSnapshotUnchanged($cache, $file)) {
+        if (self::isSnapshotValid($cache, $file)) {
             return $path;
         }
 
@@ -149,10 +148,10 @@ class PathFinder
     }
 
     /**
-     * Tells whether the main slice of the cached file remained the same as the
+     * Tells whether the snapshot of the cached file remained the same as the
      * cached version or not.
      */
-    private static function isSnapshotUnchanged(
+    private static function isSnapshotValid(
         array $cache,
         SplFileObject $file
     ): bool {
@@ -213,17 +212,10 @@ class PathFinder
         );
         $notCachedFileList = \array_diff($fileList, $cachedFileList);
 
-        $this->updateCacheForPaths($notCachedFileList);
-        if ($this->cache->hasItem($unitName)) {
-            return $this->cache->getItem($unitName)->get()[Unit::PATH];
-        }
-
-        $this->updateCacheForPaths($cachedFileList);
-        if ($this->cache->hasItem($unitName)) {
-            return $this->cache->getItem($unitName)->get()[Unit::PATH];
-        }
-
-        throw new \RuntimeException("Path of unit '$unitName' not found.");
+        return
+            $this->searchWhileUpdatingCache($unitName, $notCachedFileList) ??
+            $this->searchWhileUpdatingCache($unitName, $cachedFileList) ??
+            throw new \RuntimeException("Path of unit '$unitName' not found.");
     }
 
     /**
@@ -235,37 +227,58 @@ class PathFinder
      */
     private function getFileList(): array
     {
-        $fileIt = new RecursiveIteratorIterator(new RecursiveDirectoryIterator(
-            $this->rootPath,
-            FilesystemIterator::SKIP_DOTS
-        ));
+        // Ignore directories starting with a dot
+        $rootDirIt = new DirectoryIterator($this->rootPath);
 
         $pathList = [];
-        foreach ($fileIt as $file) {
-            $pathList[] = $file->getRealPath();
+        foreach ($rootDirIt as $rootChild) {
+            if ($rootChild->getFilename()[0] === '.') {
+                continue;
+            }
+
+            if (!$rootChild->isDir()) {
+                $pathList[] = $rootChild->getRealPath();
+                continue;
+            }
+
+            $fileIt = new RecursiveIteratorIterator(
+                new RecursiveDirectoryIterator(
+                    $rootChild->getRealPath(),
+                    FilesystemIterator::SKIP_DOTS,
+                ),
+            );
+
+            foreach ($fileIt as $file) {
+                $pathList[] = $file->getRealPath();
+            }
         }
 
         return $pathList;
     }
 
     /**
-     * Updates the cache for a specific list of files.
+     * Searches for a unit while updating the cache for a list of files.
      *
-     * @param string[] $paths Absolute paths of the files to get scanned.
+     * @param string[] $targetPaths Absolute paths of the files to get scanned.
+     * @return ?string The path of the found unit, null otherwise.
      */
-    private function updateCacheForPaths(array $paths): void
-    {
-        foreach ($paths as $path) {
+    private function searchWhileUpdatingCache(
+        string $unitName,
+        array $targetPaths
+    ): ?string {
+        $resultPath = null;
+
+        foreach ($targetPaths as $targetPath) {
             $matchesCount = preg_match_all(
                 Regex::UNIT,
-                \file_get_contents($path),
+                \file_get_contents($targetPath),
                 $matches,
                 \PREG_OFFSET_CAPTURE
             );
 
             for ($i = 0; $i < $matchesCount; $i++) {
                 $cache = Unit::make(
-                    $path,
+                    $targetPath,
                     SnapshotInfo::make(
                         $matches[0][$i][1],
                         \strlen($matches[0][$i][0]),
@@ -273,12 +286,18 @@ class PathFinder
                     ),
                     UnitType::fromKeyword($matches[1][$i][0])
                 );
-                $unitName = $matches[2][$i][0];
+                $foundUnitName = $matches[2][$i][0];
 
                 // Updates the cache implicitly
-                $this->cache->get($unitName, fn() => $cache);
+                $this->cache->get($foundUnitName, fn() => $cache);
+
+                if ($unitName === $foundUnitName) {
+                    $resultPath = $targetPath;
+                }
             }
         }
+
+        return $resultPath;
     }
 }
 
@@ -328,30 +347,21 @@ class SnapshotInfo
 class UnitType
 {
     public const ENTITY = "entity";
-    public const PACAKGE = "package";
+    public const PACKAGE = "package";
 
     /**
      * Makes a unit type from a VHDL keyword.
      */
     public static function fromKeyword(string $keyword): string
     {
-        $lowercaseKeyword = \strtolower($keyword);
+        return match (\strtolower($keyword)) {
+            "entity" => self::ENTITY,
+            "package" => self::PACKAGE,
 
-        switch ($lowercaseKeyword) {
-            case "entity":
-                return self::ENTITY;
-                // No break
-
-            case "package":
-                return self::PACAKGE;
-                // No break
-
-            default:
-                throw new \InvalidArgumentException(
-                    "Cannot convert keyword '$keyword' to a valid unit type"
-                );
-                // No break
-        }
+            default => throw new \InvalidArgumentException(
+                "Cannot convert keyword '$keyword' to a valid unit type"
+            ),
+        };
     }
 }
 
@@ -365,12 +375,14 @@ class Regex
 
     public static function for(string $unitType, string $unitName)
     {
-        if ($unitType === UnitType::ENTITY) {
-            return self::entity($unitName);
-        } elseif ($unitType === UnitType::PACAKGE) {
-            return self::package($unitName);
-        }
-        throw new \InvalidArgumentException("Invalid unit type $unitType");
+        return match ($unitType) {
+            UnitType::ENTITY => self::entity($unitName),
+            UnitType::PACKAGE => self::package($unitName),
+
+            default => throw new \InvalidArgumentException(
+                "Invalid unit type $unitType"
+            ),
+        };
     }
 
     public static function entity(string $unitName): string
