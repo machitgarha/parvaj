@@ -3,18 +3,18 @@
 namespace MAChitgarha\Parvaj;
 
 use SplFileObject;
+use FilesystemIterator;
 use RecursiveIteratorIterator;
 use RecursiveDirectoryIterator;
 use MAChitgarha\Parvaj\PathFinder\Cache\{
     Root as CacheRoot,
     Unit,
-    UnitType,
     SnapshotInfo,
+    UnitType,
 };
 use MAChitgarha\Parvaj\PathFinder\Regex;
 use MAChitgarha\Phirs\DirectoryProviderFactory;
 use MAChitgarha\Phirs\Util\Platform;
-use Psr\Cache\CacheItemInterface;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Component\Filesystem\Path;
@@ -67,19 +67,19 @@ class PathFinder
         $this->cache = self::makeCache($rootPath);
     }
 
+    private static function makeCache(string $rootPath): FilesystemAdapter
+    {
+        return new FilesystemAdapter($rootPath, 0, self::makeCachePath());
+    }
+
     private static function makeCachePath()
     {
         return Path::join(
             DirectoryProviderFactory::createStandard(
                 Platform::autoDetect()
             )->getCachePath(),
-            'parvaj',
+            "parvaj",
         );
-    }
-
-    private static function makeCache(string $rootPath): FilesystemAdapter
-    {
-        return new FilesystemAdapter($rootPath, 0, self::makeCachePath());
     }
 
     /**
@@ -102,7 +102,7 @@ class PathFinder
     private function findCached(string $unitName): string
     {
         $cacheItem = $this->cache->getItem($unitName);
-        $path = $cacheItem->get()[UnitKey::PATH];
+        $path = $cacheItem->get()[Unit::PATH];
 
         if (\file_exists($path)) {
             /*
@@ -111,20 +111,20 @@ class PathFinder
              */
             $file = new SplFileObject($path, "r");
 
-            return $this->findCachedWithExistentFile($cacheItem, $file);
+            return $this->findCachedWithExistentFile(
+                $cacheItem,
+                $file,
+                $unitName,
+            );
         } else {
             return $this->findNotCached($unitName);
         }
     }
 
-    private function makeCacheAbsolutePath(array $cache): string
-    {
-        return $this->getAbsolutePathOf();
-    }
-
     private function findCachedWithExistentFile(
         ItemInterface $cacheItem,
-        SplFileObject $file
+        SplFileObject $file,
+        string $unitName
     ): string {
         $cache = $cacheItem->get();
         $path = $file->getPathname();
@@ -156,7 +156,7 @@ class PathFinder
         array $cache,
         SplFileObject $file
     ): bool {
-        $snapshotInfo = $cache[UnitKey::SNAPSHOT_INFO];
+        $snapshotInfo = $cache[Unit::SNAPSHOT_INFO];
 
         return self::getSnapshotFromFile(
             $file,
@@ -209,7 +209,7 @@ class PathFinder
         $fileList = $this->getFileList();
         $cachedFileList = $this->cache->get(
             CacheRoot::CACHED_PATHS,
-            fn($_) => []
+            fn() => []
         );
         $notCachedFileList = \array_diff($fileList, $cachedFileList);
 
@@ -276,7 +276,7 @@ class PathFinder
                 $unitName = $matches[2][$i][0];
 
                 // Updates the cache implicitly
-                $this->cache->get($unitName, fn($_) => $cache);
+                $this->cache->get($unitName, fn() => $cache);
             }
         }
     }
@@ -356,6 +356,8 @@ class UnitType
 }
 
 namespace MAChitgarha\Parvaj\PathFinder;
+
+use MAChitgarha\Parvaj\PathFinder\Cache\UnitType;
 
 class Regex
 {

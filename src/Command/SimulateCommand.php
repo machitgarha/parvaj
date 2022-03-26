@@ -2,7 +2,6 @@
 
 namespace MAChitgarha\Parvaj\Command;
 
-use MAChitgarha\Parvaj\PathFinder;
 use MAChitgarha\Parvaj\DependencyResolver;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputOption;

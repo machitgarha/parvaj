@@ -24,7 +24,7 @@ class DependencyResolver
     public function resolve(string $initialUnit): array
     {
         return \array_unique(\iterator_to_array(
-            self::findDependencyPathsRecursive(
+            $this->findDependencyPathsRecursive(
                 $initialUnitPath = $this->pathFinder->find($initialUnit),
                 [$initialUnitPath]
             ),
@@ -32,7 +32,7 @@ class DependencyResolver
         ));
     }
 
-    private static function findDependencyPathsRecursive(
+    private function findDependencyPathsRecursive(
         string $path,
         array $scannedPaths
     ): \Generator {
@@ -86,8 +86,6 @@ class DependencyResolver
     ): \Generator {
         if (preg_match_all($regex, $fileContents, $matches)) {
             yield from $matches[1];
-        } else {
-            yield from [];
         }
     }
 }
