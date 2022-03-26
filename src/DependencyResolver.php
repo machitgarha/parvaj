@@ -2,50 +2,48 @@ g<?php
 
 namespace MAChitgarha\Parvaj;
 
-use MAChitgarha\Parvaj\File\PathGenerator\SourceFilePath;
+use MAChitgarha\Parvaj\DependencyResolver\Regex;
 use MAChitgarha\Parvaj\Util\File;
 
 class DependencyResolver
 {
-    private const REGEX_COMPONENT_FINDER = '/component\s+([a-z0-9_]+)/is';
-    private const REGEX_PACKAGE_FINDER = '/use\s+work\.(\w+)\.\w+;/is';
+    /**
+     * The path of the initial file. It should be a unit-test file.
+     */
+    private string $initFilePath;
 
-    private string $mainUnitTestFilePath;
-
-    public function __construct(string $mainUnitTestFilePath)
+    public function __construct(string $initFilePath)
     {
-        $this->mainUnitTestFilePath = $mainUnitTestFilePath;
+        $this->initFilePath = $initFilePath;
     }
 
     public function resolve(): \Generator
     {
         yield from self::findDependencyPathsRecursive(
-            $this->mainUnitTestFilePath,
-            [$this->mainUnitTestFilePath]
+            $this->initFilePath,
+            [$this->initFilePath]
         );
     }
 
     private static function findDependencyPathsRecursive(
-        string $currentPath,
-        array $parentPaths
+        string $path,
+        array $scannedPaths
     ): \Generator {
-        foreach (
-            self::extractDependencyNames($currentPath) as $dependencyName
-        ) {
-            $dependencyPath = SourceFilePath::locate($dependencyName);
+        foreach (self::extractDependencyNames($path) as $dependencyName) {
+            $dependencyPath = PathFinder::find($dependencyName);
 
             // Prevent from infinite recursion
-            if (\in_array($dependencyPath, $parentPaths)) {
+            if (\in_array($dependencyPath, $scannedPaths)) {
                 yield $dependencyPath;
             } else {
                 yield from self::findDependencyPathsRecursive(
                     $dependencyPath,
-                    [...$parentPaths, $dependencyPath]
+                    [...$scannedPaths, $dependencyPath]
                 );
             }
         }
 
-        yield $currentPath;
+        yield $path;
     }
 
     private static function extractDependencyNames(
@@ -62,7 +60,7 @@ class DependencyResolver
     ): \Generator {
         yield from self::extractDependencyUsingRegex(
             $fileContents,
-            self::REGEX_COMPONENT_FINDER
+            Regex::COMPONENT
         );
     }
 
@@ -71,7 +69,7 @@ class DependencyResolver
     ): \Generator {
         yield from self::extractDependencyUsingRegex(
             $fileContents,
-            self::REGEX_PACKAGE_FINDER
+            Regex::USE_PACKAGE
         );
     }
 
@@ -85,4 +83,13 @@ class DependencyResolver
             yield from [];
         }
     }
+}
+
+// Inner classes
+namespace MAChitgarha\Parvaj\DependencyResolver;
+
+class Regex
+{
+    public const COMPONENT = "/component\s+([a-z0-9_]+)/i";
+    public const USE_PACKAGE = "/use\s+work\.(\w+)\.\w+;/i";
 }

@@ -11,9 +11,7 @@ use MAChitgarha\Parvaj\PathFinder\Cache\{
     UnitType,
     SnapshotInfo,
 };
-use MAChitgarha\Parvaj\PathFinder\{
-    RegexPattern,
-};
+use MAChitgarha\Parvaj\PathFinder\Regex;
 use MAChitgarha\Phirs\DirectoryProviderFactory;
 use MAChitgarha\Phirs\Util\Platform;
 use Psr\Cache\CacheItemInterface;
@@ -189,7 +187,7 @@ class PathFinder
         string $unitName,
         string $unitType
     ): ?array {
-        $pattern = RegexPattern::for($unitType, $unitName);
+        $pattern = Regex::for($unitType, $unitName);
         $fileContents = $file->fread($file->getSize());
 
         if (preg_match($pattern, $fileContents, $match, \PREG_OFFSET_CAPTURE)) {
@@ -259,7 +257,7 @@ class PathFinder
     {
         foreach ($paths as $path) {
             $matchesCount = preg_match_all(
-                RegexPattern::UNIT,
+                Regex::UNIT,
                 \file_get_contents($path),
                 $matches,
                 \PREG_OFFSET_CAPTURE
@@ -359,7 +357,7 @@ class UnitType
 
 namespace MAChitgarha\Parvaj\PathFinder;
 
-class RegexPattern
+class Regex
 {
     public const UNIT = "/(entity|package)\s+(\w+)\s/i";
 
