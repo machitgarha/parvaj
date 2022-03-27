@@ -22,6 +22,8 @@ use Symfony\Component\Filesystem\Path;
 
 class PathFinder
 {
+    private const VALID_EXTENSIONS = ["vhd", "vhdl"];
+
     private string $rootPath;
 
     /**
@@ -70,7 +72,10 @@ class PathFinder
 
     private static function makeCache(string $rootPath): FilesystemAdapter
     {
-        return new FilesystemAdapter($rootPath, 0, self::makeCachePath());
+        return new FilesystemAdapter(
+            directory: self::makeCachePath(),
+            namespace: $rootPath,
+        );
     }
 
     private static function makeCachePath()
@@ -160,7 +165,7 @@ class PathFinder
         return self::getSnapshotFromFile(
             $file,
             $snapshotInfo[SnapshotInfo::START],
-            $snapshotInfo[SnapshotInfo::LENGTH]
+            $snapshotInfo[SnapshotInfo::LENGTH],
         ) === $snapshotInfo[SnapshotInfo::CONTENT];
     }
 
@@ -212,6 +217,8 @@ class PathFinder
         );
         $notCachedFileList = \array_diff($fileList, $cachedFileList);
 
+        $this->cache->get(CacheRoot::CACHED_PATHS, fn() => $fileList, \INF);
+
         return
             $this->searchWhileUpdatingCache($unitName, $notCachedFileList) ??
             $this->searchWhileUpdatingCache($unitName, $cachedFileList) ??
@@ -249,7 +256,9 @@ class PathFinder
             );
 
             foreach ($fileIt as $file) {
-                $pathList[] = $file->getRealPath();
+                if (\in_array($file->getExtension(), self::VALID_EXTENSIONS)) {
+                    $pathList[] = $file->getPathname();
+                }
             }
         }
 
@@ -269,6 +278,11 @@ class PathFinder
         $resultPath = null;
 
         foreach ($targetPaths as $targetPath) {
+            // If the file is removed from the previous time
+            if (!\file_exists($targetPath)) {
+                continue;
+            }
+
             $matchesCount = preg_match_all(
                 Regex::UNIT,
                 \file_get_contents($targetPath),
@@ -288,8 +302,7 @@ class PathFinder
                 );
                 $foundUnitName = $matches[3][$i][0];
 
-                // Updates the cache implicitly
-                $this->cache->get($foundUnitName, fn() => $cache);
+                $this->cache->get($foundUnitName, fn() => $cache, \INF);
 
                 if ($unitName === $foundUnitName) {
                     $resultPath = $targetPath;
