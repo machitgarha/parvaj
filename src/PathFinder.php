@@ -280,13 +280,13 @@ class PathFinder
                 $cache = Unit::make(
                     $targetPath,
                     SnapshotInfo::make(
-                        $matches[0][$i][1],
-                        \strlen($matches[0][$i][0]),
-                        $matches[0][$i][0],
+                        $matches[1][$i][1],
+                        \strlen($matches[1][$i][0]),
+                        $matches[1][$i][0],
                     ),
-                    UnitType::fromKeyword($matches[1][$i][0])
+                    UnitType::fromKeyword($matches[2][$i][0])
                 );
-                $foundUnitName = $matches[2][$i][0];
+                $foundUnitName = $matches[3][$i][0];
 
                 // Updates the cache implicitly
                 $this->cache->get($foundUnitName, fn() => $cache);
@@ -371,7 +371,11 @@ use MAChitgarha\Parvaj\PathFinder\Cache\UnitType;
 
 class Regex
 {
-    public const UNIT = "/(entity|package)\s+(\w+)\s/i";
+    public const UNIT =
+        "/" .
+        "((entity|package)\s+(\w+)\s)" .
+        ".*end(\s+(entity|package))?(\s+\w+)?\s*;" .
+        "/is";
 
     public static function for(string $unitType, string $unitName)
     {
