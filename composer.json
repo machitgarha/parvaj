@@ -1,4 +1,14 @@
 {
+    "name": "machitgarha/parvaj",
+    "description": "Easy and semi-intelligent VHDL simulation tool",
+    "type": "project",
+    "homepage": "https://github.com/machitgarha/parvaj",
+    "license": "AGPL-3.0",
+    "authors": [{
+        "name": "Mohammad Amin Chitgarha",
+        "email": "machitgarha@outlook.com",
+        "role": "Maintainer"
+    }],
     "require": {
         "php": "^8.0",
         "symfony/process": "^6.0",
