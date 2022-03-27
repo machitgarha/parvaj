@@ -16,11 +16,11 @@ use Symfony\Component\Filesystem\Path;
 class SimulateCommand extends Command
 {
     protected const NAME = "simulate";
-    protected const DESCRIPTION = <<<"DESCRIPTION"
+    protected const DESCRIPTION = <<<DESCRIPTION
         Simulates a unit-test entity.
         DESCRIPTION;
     // TODO: Add an example
-    protected const HELP = <<<"HELP"
+    protected const HELP = <<<HELP
         Runs a simulation for a particular unit-test entity.
 
         Analyzes all needed source unit files by resolving all dependencies,
@@ -43,7 +43,7 @@ class SimulateCommand extends Command
     protected const OPT_WAVEFORM_DESCRIPTION =
         "Which waveform format to be used for the output files. Possible " .
         "values are ghw and vcd. Case-sensitive, must be all lowercased.";
-    protected const OPT_WAVEFORM_DEFAULT = "ghw";
+    protected const OPT_WAVEFORM_DEFAULT = "vcd";
 
     protected const OPT_NO_O_NAME = "no-o";
     protected const OPT_NO_O_DESCRIPTION =
@@ -223,15 +223,14 @@ class SimulateCommand extends Command
         bool $noO,
         array $options
     ): void {
-        if ($waveformType === "ghw") {
-            $waveformOption = ["--wave=$outputWaveformFilePath"];
-        } elseif ($waveformType === "vcd") {
-            $waveformOption = ["--vcd=$outputWaveformFilePath"];
-        } else {
-            throw new \RuntimeException(
-                "Invalid waveform given '$waveformType'"
-            );
-        }
+        $waveform = match ($waveformType) {
+            "vhd" => ["--vcd=$outputWaveformFilePath"],
+            "ghw" => ["--wave=$outputWaveformFilePath"],
+
+            default => throw new \RuntimeException(
+                "Invalid waveform type '$waveformType'"
+            ),
+        };
 
         $oOption = ["-o", Path::join($workdir, $testEntityName)];
         if ($noO) {

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e27f38d7a2f812013c02996158dd954d",
+    "content-hash": "940fa33729573d5d2527f2d4a31a90be",
     "packages": [
         {
             "name": "machitgarha/phirs",
@@ -2186,7 +2186,9 @@
     "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
-    "platform": [],
+    "platform": {
+        "php": "^8.0"
+    },
     "platform-dev": [],
     "plugin-api-version": "2.2.0"
 }
