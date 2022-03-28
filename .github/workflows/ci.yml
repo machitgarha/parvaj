@@ -1,0 +1,23 @@
+name: CI
+
+on:
+    push:
+        branches: [master, develop]
+    pull_request:
+        branches: [develop]
+
+jobs:
+    static-analysis:
+        name: Phan Static Analysis
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v2
+
+            - name: Prepare PHP 8.0 + Phan
+              uses: shivammathur/setup-php@v2
+              with:
+                php-extension: '8.0'
+                tools: phan
+
+            - name: Run Phan
+              run: phan
