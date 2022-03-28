@@ -19,5 +19,8 @@ jobs:
                 php-extension: '8.0'
                 tools: phan
 
+            - name: Install Composer dependencies
+              run: composer install
+
             - name: Run Phan
               run: phan
