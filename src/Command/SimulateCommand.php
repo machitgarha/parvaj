@@ -53,7 +53,7 @@ class SimulateCommand extends Command
     protected const OPT_OPTION_NAME = "option";
     protected const OPT_OPTION_DESCRIPTION =
         "Simulation options passed to GHDL when running the test. Some " . "options must not be used, or you might get an error during the " .
-        "process, including --wave, --workdir and -o. It may make seems too " .
+        "process, including --wave, --workdir and -o. It may seem too " .
         "verbose, but for now, there must be exactly one per given option, " .
         "or things should not work correctly. An example could be: " .
         "--stop-time=3ns.";
@@ -223,8 +223,8 @@ class SimulateCommand extends Command
         bool $noO,
         array $options
     ): void {
-        $waveform = match ($waveformType) {
-            "vhd" => ["--vcd=$outputWaveformFilePath"],
+        $waveformOption = match ($waveformType) {
+            "vcd" => ["--vcd=$outputWaveformFilePath"],
             "ghw" => ["--wave=$outputWaveformFilePath"],
 
             default => throw new \RuntimeException(
