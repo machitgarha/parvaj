@@ -36,3 +36,4 @@ jobs:
                     asset_name: parvaj.phar
                     tag: ${{ github.ref }}
                     overwrite: true
+                    prerelease: true
