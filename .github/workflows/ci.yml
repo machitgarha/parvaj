@@ -10,16 +10,13 @@ jobs:
     static-analysis:
         name: Phan Static Analysis
         runs-on: ubuntu-latest
-        strategy:
-            matrix:
-                php: ['8.0', '8.1']
         steps:
             -   uses: actions/checkout@v3
 
             -   name: Setup PHP with Phan
                 uses: shivammathur/setup-php@v2
                 with:
-                    php-version: ${{ matrix.php }}
+                    php-version: '8.0'
                     tools: phan
 
             -   name: Install Composer dependencies

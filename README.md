@@ -93,7 +93,7 @@ If you live in Iran, you can make donations [here](https://coffeebede.ir/buycoff
 
 ### To-Do
 
--   Distribute in other probably-better formats, like Phar or AppImage. With Phar, users would get rid of installing Composer (particularly useful for Windows users). Having an AppImage format could be even better: An average Linux user does not need to install anything, and everything (even GHDL or GtkWave) could be bundled into the package. 
+-   Distribute in other probably-better formats, like Phar or AppImage. With Phar, users would get rid of installing Composer (particularly useful for Windows users). Having an AppImage format could be even better: An average Linux user does not need to install anything, and everything (even GHDL or GtkWave) could be bundled into the package.
 
 ## License
 
