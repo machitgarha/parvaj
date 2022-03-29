@@ -1,2 +1,5 @@
 # Dependencies
-vendor/
+/vendor/
+
+# Build directory, e.g. for GitHub Actions
+/build/
