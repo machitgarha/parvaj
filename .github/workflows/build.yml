@@ -3,7 +3,6 @@ name: Build release files
 on:
     push:
         tags: '*'
-        branches: [master, develop]
     release:
         types: [created]
 

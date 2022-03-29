@@ -10,8 +10,9 @@ jobs:
     static-analysis:
         name: Phan Static Analysis
         runs-on: ubuntu-latest
-        matrix:
-            php: ['8.0', '8.1']
+        strategy:
+            matrix:
+                php: ['8.0', '8.1']
         steps:
             -   uses: actions/checkout@v3
 
