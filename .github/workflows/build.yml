@@ -1,0 +1,39 @@
+name: Build release files
+
+on:
+    push:
+        tags: '*'
+        branches: [master, develop]
+    release:
+        types: [created]
+
+jobs:
+    make-phar:
+        name: Make Phar file using Box
+        runs-on: ubuntu-latest
+        steps:
+            -   uses: actions/checkout@v3
+
+            -   name: Setup PHP and Phive
+                uses: shivammathur/setup-php@v2
+                with:
+                    php-version: '8.0'
+                    tools: phive
+
+            -   name: Install Composer dependencies
+                uses: "ramsey/composer-install@v2"
+
+            -   name: Install Box using Phive
+                run: phive install humbug/box --force-accept-unsigned
+
+            -   name: Build Phar
+                run: ./tools/box compile
+
+            -   name: Upload release files
+                uses: svenstaro/upload-release-action@v2
+                with:
+                    repo_token: ${{ secrets.GITHUB_TOKEN }}
+                    file: build/parvaj.phar
+                    asset_name: parvaj.phar
+                    tag: ${{ github.ref }}
+                    overwrite: true
