@@ -2,13 +2,29 @@
 
 ![Version](https://img.shields.io/github/v/tag/machitgarha/parvaj?color=purple&label=Version&style=flat-square)
 
-Automation scripts helping you working with GHDL and GtkWave, when writing VHDL code. Create source entities, create tests and run them with ease.
+Easy and semi-intelligent VHDL simulation tool, integrating GHDL and GTKWave.
 
-## Why?
+## Features
 
--   Automate the process of simulation and testing. Powerfully. It should drastically increase development speed.
+-   **Easy:**
 
--   It forces everyone in the project to implicitly follow the same standards (changing the standards is not possible for now, however, including naming conventions).
+    -   💡 Zero-configuration by default. Go ahead and simulate your design!
+
+    -   ☕ Easy to use. You don't need to remember or look for dependencies everytime, Parvaj does this for you. You wouldn't even need to know most of the GHDL command-line options.
+
+    -   ☔ Simple installation process, by providing Phar files.
+
+-   **Fast:**
+
+    -   ⛽ Speed up your development. Don't get your hands dirty by invoking GHDL and GTKWave manually, use the simple `simulate` command instead to do all the steps for you.
+
+    -   ⚡ The tool itself is designed to have good performance. It uses a proper cache mechanism for this. Although it uses regex patterns for major tasks, thanks to fast PHP regex engine, you wouldn't notice slowdowns.
+
+-   **Semi-intelligent:**
+
+    -   🔥 Automatic detection of dependencies. Forget about what depends on what.
+
+    -   🧠 After finding where a unit (e.g. entity) leaves, it remembers it. Don't worry, it is smart enough to check if it was moved around or has been renamed. Just use it!
 
 ## Requirements
 
