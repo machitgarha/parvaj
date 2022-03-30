@@ -87,7 +87,7 @@ parvaj simulate test_multiplexer_2_to_1
 
 Woah! Got the magic?
 
-Note that, for the `simulate` command to work correctly, you must be in the project root, not one of its sub-directories. It might be annoying for some people, but not implemented yet (#3).
+Note that, for the `simulate` command to work correctly, you must be in the project root, not one of its sub-directories. It might be annoying for some people, but not implemented yet ([#2](https://github.com/machitgarha/parvaj/issues/2)).
 
 ### Other Options and the Use of Helps
 
@@ -106,7 +106,7 @@ parvaj simulate test_multiplexer_2_to_1 --workdir=obj/
 ```
 ## Platform Support
 
-Everything should work fine on Linux-based platforms, and generally Unix-like ones (e.g. OS X). The code should run on Windows as well, but not properly tested.
+Everything should work fine on Linux-based platforms, and generally Unix-like ones (e.g. OS X). It should run on Windows as well, but not properly tested.
 
 ## Contributions? Of Course!
 
@@ -120,7 +120,7 @@ If you live in Iran, you can make donations [here](https://coffeebede.ir/buycoff
 
 ### To-Do
 
--   Distribute in other probably-better formats, like Phar or AppImage. With Phar, users would get rid of installing Composer (particularly useful for Windows users). Having an AppImage format could be even better: An average Linux user does not need to install anything, and everything (even GHDL or GtkWave) could be bundled into the package.
+-   Distribute as AppImage. No need to install PHP, or even with a seperated statically-bundled version, no need to install GHDL or GTKWave, just download and run it.
 
 ## License
 

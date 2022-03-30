@@ -17,7 +17,7 @@ class SimulateCommand extends Command
 {
     protected const NAME = "simulate";
     protected const DESCRIPTION = <<<DESCRIPTION
-        Simulates a unit-test entity.
+        Simulates an entity.
         DESCRIPTION;
     // TODO: Add an example
     protected const HELP = <<<HELP
@@ -29,9 +29,9 @@ class SimulateCommand extends Command
         waveform visually in a GtkWave window.
         HELP;
 
-    protected const ARG_TEST_ENTITY_NAME_NAME = "test-entity-name";
+    protected const ARG_TEST_ENTITY_NAME_NAME = "entity-name";
     protected const ARG_TEST_ENTITY_NAME_DESCRIPTION =
-        "The name of the unit-test entity.";
+        "The name of the test-bench entity to get simulated.";
 
     protected const OPT_WORKDIR_NAME = "workdir";
     protected const OPT_WORKDIR_DESCRIPTION =
