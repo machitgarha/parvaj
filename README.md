@@ -12,7 +12,9 @@ Easy and semi-intelligent VHDL simulation tool, integrating GHDL and GTKWave.
 
     -   ☕ Easy to use. You don't need to remember or look for dependencies everytime, Parvaj does this for you. You wouldn't even need to know most of the GHDL command-line options.
 
+    <!-- TODO: Add this when AppImage is provided:
     -   ☔ Simple installation process, by providing Phar files.
+    -->
 
 -   **Fast:**
 
@@ -26,73 +28,82 @@ Easy and semi-intelligent VHDL simulation tool, integrating GHDL and GTKWave.
 
     -   🧠 After finding where a unit (e.g. entity) leaves, it remembers it. Don't worry, it is smart enough to check if it was moved around or has been renamed. Just use it!
 
-## Requirements
+## Let's Install!
 
-You must have the following installed:
+There are two methods to install Parvaj: Use a Phar file, or include it as Git submodule. We only cover the main method here. For other methods, please refer to [installation methods](docs/en/installation.md).
 
--   PHP 7.4+
--   Composer
+### Use a Phar File
+
+#### Requirements
+
+-   PHP 8.0+
 -   GHDL
--   GtkWave
+-   GTKWave
 
-If you have a Linux distribution, then installing all these should be fairly easy. For example, on Fedora, you could simply do:
-
-```bash
-sudo dnf install php composer ghdl gtkwave
-```
-
-## Getting It
-
-The easiest way to use it in your project is to add it as a Git submodule:
+Having a Linux distribution, installing these should be easy. For instance, on Fedora 35, you could simply do:
 
 ```bash
-git submodule add https://github.com/machitgarha/parvaj scripts/
+sudo dnf install php ghdl gtkwave
 ```
 
-Then, install the required dependencies:
+#### Getting It
 
-```bash
-cd scripts
-composer install
-```
-
-That's it!
-
-## How to Use It?
-
-Suppose you have it under `scripts` directory. Running Parvaj should be easy:
-
-```bash
-./scripts/bin/parvaj --help
-```
-
-There are two commands available:
-
-1.  `create-entity`: Create an entity, either a source or a unit-test one (their name suggest what they are), and make some basic (but incomplete) contents in it. Instead of creating entities manually, you must use this command, otherwise the simulation functionality won't work (because it uses rules to find source and unit-test files).
-
-2.  `simulate`: Simulates a specific unit-test entity. It first invokes GHDL to make things ready (i.e. auto-analysis and elab-running), and then represents the results in GtkWave.
-
-### Examples
-
--   Create a source entity named `multiplexer_2_to_1` in `src/multiplexers/multiplexer-2-to-1.vhd`:
+1.  Download [Parvaj Phar file](https://github.com/machitgarha/parvaj/releases/download/latest/parvaj.phar).
 
     ```bash
-    ./scripts/bin/parvaj create-entity source multiplexer_2_to_1 multiplexers
+    wget https://github.com/machitgarha/parvaj/releases/download/latest/parvaj.phar
     ```
--   Runs simulation of the unit-test entity named `test_multiplexer_2_to_1` (by auto-finding the correspending file):
+
+1.  Make it executable.
 
     ```bash
-    ./scripts/bin/parvaj simulate test_multiplexer_2_to_1
+    chmod +x parvaj.phar
     ```
 
-### Helps Everywhere!
+1.  Put it somewhere in your `$PATH`.
 
-You can always use `--help` in order to see how a command works:
+    ```bash
+    # Supposing ~/.local/bin is in your $PATH
+    mv parvaj.phar ~/.local/bin
+    ```
+
+1.  Done! Make sure the installation was successful:
+
+    ```bash
+    parvaj
+    ```
+
+Throughout this document, it is supposed you installed Parvaj using this method.
+
+## How to Use?
+
+The primary Parvaj command is `simulate`. It simulates a test-bench for you, given its name. Yes, it is really that simple!
+
+For example, to simulate a test-bench named `test_multiplexer_2_to_1`, run:
 
 ```bash
-./scripts/bin/parvaj simulate --help
+parvaj simulate test_multiplexer_2_to_1
 ```
 
+Woah! Got the magic?
+
+Note that, for the `simulate` command to work correctly, you must be in the project root, not one of its sub-directories. It might be annoying for some people, but not implemented yet (#3).
+
+### Other Options and the Use of Helps
+
+You may also want to use specific GHDL options, or some options provided by Parvaj. In this case, you could use the `help` command to see a full list of options with their explanations:
+
+```bash
+parvaj help simulate
+# Or
+parvaj simulate --help
+```
+
+For example, with `--workdir` option, you can change the working directory (which is `build/` by default):
+
+```bash
+parvaj simulate test_multiplexer_2_to_1 --workdir=obj/
+```
 ## Platform Support
 
 Everything should work fine on Linux-based platforms, and generally Unix-like ones (e.g. OS X). The code should run on Windows as well, but not properly tested.
