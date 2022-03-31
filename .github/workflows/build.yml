@@ -21,6 +21,8 @@ jobs:
 
             -   name: Install Composer dependencies
                 uses: "ramsey/composer-install@v2"
+                with:
+                    composer-options: "--no-dev --optimize-autoloader"
 
             -   name: Install Box using Phive
                 run: phive install humbug/box --force-accept-unsigned
