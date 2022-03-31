@@ -87,7 +87,7 @@ parvaj simulate test_multiplexer_2_to_1
 
 Woah! Got the magic?
 
-Note that, for the `simulate` command to work correctly, you must be in the project root, not one of its sub-directories. It might be annoying for some people, but not implemented yet ([#2](https://github.com/machitgarha/parvaj/issues/2)).
+Note that, for the `simulate` command to work correctly, you must be in the project root, not one of its sub-paths. It might be annoying for some, but not implemented yet ([#2](https://github.com/machitgarha/parvaj/issues/2)).
 
 ### Other Options and the Use of Helps
 
