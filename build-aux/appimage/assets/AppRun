@@ -1,0 +1,8 @@
+#!/bin/sh
+
+here="$(dirname "$(readlink -f "${0}")")"
+
+export LD_LIBRARY_PATH="$here/usr/lib":"$here/usr/lib64"
+export PATH="$here/usr/bin":"$PATH"
+
+"$here/parvaj/bin/parvaj" "$@"

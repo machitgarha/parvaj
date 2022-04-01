@@ -1,0 +1,7 @@
+[Desktop Entry]
+Name=Parvaj
+Icon=parvaj
+Type=Application
+Comment=Easy and semi-intelligent VHDL simulation tool, integrating GHDL and GTKWave
+Terminal=true
+Categories=Development;
