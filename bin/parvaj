@@ -5,4 +5,5 @@ use MAChitgarha\Parvaj\Console\Application;
 
 require __DIR__ . "/../vendor/autoload.php";
 
-(new Application())->run();
+$app = new Application();
+$app->run();
