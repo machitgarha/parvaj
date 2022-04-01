@@ -13,7 +13,7 @@ phpConfigureOptions="--disable-fileinfo --disable-phar --disable-session \
 phpMakeJobsCount="4"
 buildDir="build/"
 skipPhpBuild=false
-logFile="appimage-build.log"
+logFile="appimage.log"
 
 options=$(getopt -l "build-directory:,help,skip-php-build" -o "b:hs" -- "$@")
 
@@ -56,7 +56,29 @@ buildPhp() {
     echo " Installing..."
     make install >> "$logFile" 2>&1
 
+    echo " Preparing INI..."
+    iniPath="$installationPrefix/lib/php.ini"
+    cp ./php.ini-development "$iniPath"
+    customizePhpIni "$iniPath"
+
     cd "$previousPath"
+}
+
+customizePhpIni() {
+    iniPath="$1"
+
+    echo "
+[PHP]
+zend_extension=opcache
+
+[opcache]
+opcache.enable=1
+opcache.enable_cli=1
+
+# Enable tracing JIT
+opcache.jit_buffer_size=128M
+"\
+    >> "$iniPath"
 }
 
 bundlePhpSharedLibraries() {
@@ -144,8 +166,10 @@ mkdir -p "$appDir"
 appDir="$(realpath "$appDir")"
 
 if [ "$skipPhpBuild" != true ]; then
+    phpInstallationPath="$appDir/usr"
+
     echo "Building PHP..."
-    buildPhp "$phpSourcePath" "$appDir/usr"
+    buildPhp "$phpSourcePath" "$phpInstallationPath"
 
     echo "Bundling PHP shared libs..."
     bundlePhpSharedLibraries "$appDir"
