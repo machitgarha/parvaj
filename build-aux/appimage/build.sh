@@ -5,15 +5,28 @@ set -e
 
 here="$(realpath "$(dirname "${0}")")"
 
-arch="x86_64"
 phpConfigureOptions="--disable-fileinfo --disable-phar --disable-session \
     --disable-cgi --disable-pdo --disable-simplexml --disable-xmlreader \
     --disable-xmlwriter --enable-phpdbg=no --without-sqlite3 --enable-mbstring \
     --with-zlib=static --enable-intl --enable-pcntl"
 phpMakeJobsCount="4"
-buildDir="build/"
-skipPhpBuild=false
+phpIniCustomSettings="
+[PHP]
+zend_extension=opcache
+
+[opcache]
+opcache.enable=1
+opcache.enable_cli=1
+
+# Enable tracing JIT
+opcache.jit_buffer_size=128M
+"
+
+arch="x86_64"
 logFile="appimage.log"
+
+buildDir="$here/../../build/"
+skipPhpBuild=false
 
 options=$(getopt -l "build-directory:,help,skip-php-build" -o "b:hs" -- "$@")
 
@@ -67,18 +80,7 @@ buildPhp() {
 customizePhpIni() {
     iniPath="$1"
 
-    echo "
-[PHP]
-zend_extension=opcache
-
-[opcache]
-opcache.enable=1
-opcache.enable_cli=1
-
-# Enable tracing JIT
-opcache.jit_buffer_size=128M
-"\
-    >> "$iniPath"
+    echo "$phpIniCustomSettings" >> "$iniPath"
 }
 
 bundlePhpSharedLibraries() {
