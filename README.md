@@ -24,7 +24,7 @@ Easy and semi-intelligent VHDL simulation tool, integrating GHDL and GTKWave.
 
     -   🔥 Automatic detection of dependencies. Forget about what depends on what.
 
-    -   🧠 After finding where a unit (e.g. entity) leaves, it remembers it. Don't worry, it is smart enough to check if it was moved around or has been renamed. Just use it!
+    -   🧠 After finding where a unit (e.g. entity) lives, it remembers it. Don't worry, it is smart enough to check if it was moved around or has been renamed. Just use it!
 
 ## Let's Install!
 
@@ -125,7 +125,7 @@ Tested platforms include:
 
 Parvaj should work on Linux-based platforms, and also generally Unix-like ones (e.g. OS X, Windows WSL).
 
-It should run on Windows as well, but not properly tested. By the way, it might be hard to install GHDL on Windows than WSL.
+It should run on Windows as well, but not properly tested. By the way, it might be harder to install GHDL on Windows than WSL.
 
 ## Contributions? Of Course!
 
@@ -136,10 +136,6 @@ But hey, contribution can be simpler than that: Recommend Parvaj to your friends
 ### Donations
 
 If you live in Iran, you can make donations [here](https://coffeebede.ir/buycoffee/machitgarha). Otherwise, open an issue telling why you cannot donate from the outside. :)
-
-### To-Do
-
--   Distribute as a completely self-contained AppImage, without the need to install GHDL or GTKWave.
 
 ## License
 
