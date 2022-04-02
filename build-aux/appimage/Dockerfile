@@ -1,13 +1,15 @@
 FROM fedora:28
 
-RUN ./install-php-build-prerequisites.sh
+WORKDIR /root
 
-ENV parvajRootPath
-ENV phpSourcePath
-ENV appimagetool
-ENV version
+ENV parvajRootPath ""
+ENV phpSourcePath ""
+ENV appimagetool ""
+ENV version ""
 
 COPY . .
 
-ENTRYPOINT ./$parvajRootPath/build-aux/appimage/build.php \
-    "$parvajRootPath" "$phpSourcePath" "$appimagetool" "$version"
+ENTRYPOINT \
+    ./$parvajRootPath/build-aux/appimage/install-php-build-prerequisites.sh && \
+    ./$parvajRootPath/build-aux/appimage/build.sh \
+        "$parvajRootPath" "$phpSourcePath" "$appimagetool" "$version"
