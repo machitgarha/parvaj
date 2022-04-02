@@ -12,5 +12,5 @@ fi
 
 $sudo dnf install -y \
     autoconf make gcc gcc-c++ bison re2c \
-    libxcrypt libxml2-devel libicu-devel oniguruma-devel \
+    libxml2-devel libicu-devel oniguruma-devel \
     file appstream
