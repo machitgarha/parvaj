@@ -77,7 +77,7 @@ jobs:
                         -e parvajRootPath="./parvaj" \
                         -e phpSourcePath="./php" \
                         -e appimagetool="./appimagetool.AppImage" \
-                        -e version=${{ github.ref }} \
+                        -e version=${{ github.ref_name }} \
                         --name appimage-build \
                         appimage-build
                     docker cp appimage-build:/root/parvaj/build/appimage .
