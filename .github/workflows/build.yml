@@ -53,6 +53,7 @@ jobs:
             -   name: Install Composer dependencies
                 uses: ramsey/composer-install@v2
                 with:
+                    working-directory: parvaj
                     composer-options: "--no-dev --optimize-autoloader"
 
             -   name: Clone PHP source
@@ -64,7 +65,9 @@ jobs:
                     fetch-depth: 2
 
             -   name: Get appimagetool
-                run: curl -o appimagetool.AppImage "$appimagetoolDownloadUrl"
+                run: |
+                    curl -L -o appimagetool.AppImage "$appimagetoolDownloadUrl"
+                    chmod +x appimagetool.AppImage
 
             -   name: Build with Docker
                 run: |

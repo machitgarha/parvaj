@@ -2,6 +2,9 @@ FROM fedora:28
 
 WORKDIR /root
 
+# Invoking AppImage directly does not work as expected, because of missing FUSE2
+ENV APPIMAGE_EXTRACT_AND_RUN 1
+
 ENV parvajRootPath ""
 ENV phpSourcePath ""
 ENV appimagetool ""
