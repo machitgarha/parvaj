@@ -48,13 +48,14 @@ class SimulateCommand extends Command
         "Do not use -o option. It pollutes the project directory, but useful " .
         "for older GHDL versions where the option is unavailable.";
 
-    protected const OPT_OPTION_NAME = "option";
-    protected const OPT_OPTION_DESCRIPTION =
-        "Simulation options passed to GHDL when running the test. Some " . "options must not be used, or you might get an error during the " .
-        "process, including --wave, --workdir and -o. It may seem too " .
-        "verbose, but for now, there must be exactly one per given option, " .
-        "or things should not work correctly. An example could be: " .
-        "--stop-time=3ns.";
+    protected const OPT_SIMULATION_OPTION_NAME = "option";
+    protected const OPT_SIMULATION_OPTION_DESCRIPTION =
+        "Simulation options passed to GHDL at the run step, without the " .
+        "leading dashes. Options used by Parvaj itself must not be used, " .
+        "including 'workdir', 'vcd', 'vcd' and 'o'. There must be exactly ".
+        "one option per --option. The format of the key is 'key=value'. For " .
+        "example, `-o stop-time=3ns` is valid.";
+    protected const OPT_SIMULATION_OPTION_SHORTCUT = "o";
 
     protected function configure()
     {
@@ -93,10 +94,10 @@ class SimulateCommand extends Command
                 static::OPT_NO_O_DESCRIPTION,
             )
             ->addOption(
-                static::OPT_OPTION_NAME,
-                null,
+                static::OPT_SIMULATION_OPTION_NAME,
+                static::OPT_SIMULATION_OPTION_SHORTCUT,
                 InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
-                static::OPT_OPTION_DESCRIPTION,
+                static::OPT_SIMULATION_OPTION_DESCRIPTION,
             )
         ;
     }
@@ -118,7 +119,7 @@ class SimulateCommand extends Command
             static::OPT_NO_O_NAME
         );
         $optionsArray = $input->getOption(
-            static::OPT_OPTION_NAME
+            static::OPT_SIMULATION_OPTION_NAME
         );
 
         $pathFinder = new PathFinder(".");
@@ -147,7 +148,7 @@ class SimulateCommand extends Command
             $workdir,
             $waveformType,
             $noO,
-            $optionsArray,
+            self::normalizeSimulationOptions($optionsArray),
         );
 
         $output->writeln("Opening the results in GtkWave...");
@@ -212,6 +213,17 @@ class SimulateCommand extends Command
         return Path::join($workdir, "$testEntityName.$waveformType");
     }
 
+    private static function normalizeSimulationOptions(array $options): array
+    {
+        return \array_map(
+            fn (string $option) => (
+                // Append one or two dashes based on option length
+                \strlen(explode('=', $option)[0]) === 1 ? '-' : '--'
+            ) . $option,
+            $options
+        );
+    }
+
     private static function elabRun(
         string $ghdlExec,
         string $testEntityName,
@@ -222,8 +234,8 @@ class SimulateCommand extends Command
         array $options
     ): void {
         $waveformOption = match (\strtolower($waveformType)) {
-            "vcd" => ["--vcd=$outputWaveformFilePath"],
-            "ghw" => ["--wave=$outputWaveformFilePath"],
+            "vcd" => "--vcd=$outputWaveformFilePath",
+            "ghw" => "--wave=$outputWaveformFilePath",
 
             default => throw new \RuntimeException(
                 "Invalid waveform type '$waveformType'"
@@ -237,7 +249,7 @@ class SimulateCommand extends Command
 
         self::runProcess([
             $ghdlExec, "--elab-run", "--workdir=$workdir", ...$oOption,
-            "$testEntityName", ...$waveformOption, ...$options,
+            $testEntityName, $waveformOption, ...$options,
         ]);
     }
 
