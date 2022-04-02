@@ -58,6 +58,8 @@ echoSection() {
     echo
     echo "---------------------------------------------------------------------"
     echo "$@"
+    echo "---------------------------------------------------------------------"
+    echo
 }
 
 buildPhp() {
@@ -66,17 +68,17 @@ buildPhp() {
 
     cd "$phpSourcePath"
 
-    echoSection " Configuring..."
+    echoSection "Configuring..."
     ./buildconf --force
     ./configure --prefix="$installationPrefix" $phpConfigureOptions
 
-    echoSection " Making..."
+    echoSection "Making..."
     make -j "$phpMakeJobsCount"
 
-    echoSection " Installing..."
+    echoSection "Installing..."
     make install
 
-    echoSection " Preparing INI..."
+    echoSection "Preparing INI..."
     iniPath="$installationPrefix/lib/php.ini"
     cp ./php.ini-development "$iniPath"
     customizePhpIni "$iniPath"
