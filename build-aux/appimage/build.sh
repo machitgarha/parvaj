@@ -9,7 +9,7 @@ help="\
 Builds Parvaj AppImage bundle.
 
 Usage:
-    ./build.sh parvaj-root php-src appimagetool version [options]
+    ./build.sh parvaj-root php-src appimagetool [options]
 
 Arguments:
     parvaj-root     Path to Parvaj root directory, with installed Composer
@@ -17,14 +17,15 @@ Arguments:
     php-src         Path to PHP source directory, either as a Git
                     repository or an extracted tarball.
     appimagetool    Path to appimagetool binary.
-    version         The version name of the AppImage, used in the final AppImage
-                    name. It may be a tag representing a version (e.g. 0.2.0),
-                    or other specifiers like 'prerelease' or 'nightly'.
 
 Options:
     -b, --build-directory   Path to build directory.
     -h, --help              Show this help.
     -s, --skip-php-build    Do not re-build PHP.
+    -v, --version           The version name of the AppImage, used in the final
+                            AppImage name. It may be a tag representing a
+                            version (e.g. 0.2.0), or other specifiers like
+                            'prerelease' or 'nightly'.
 "
 
 phpConfigureOptions="--disable-fileinfo --disable-phar --disable-session \
@@ -131,19 +132,25 @@ makeAppImage() {
     appimagetool="$2"
     version="$3"
 
+    if [ -n "$version" ]; then
+        version="$version-"
+    fi
+
     mkdir -p "$resultingAppImageDir"
     cd "$resultingAppImageDir"
 
     ARCH="$arch" "$appimagetool" \
-        -u "gh-releases-zsync|machitgarha|parvaj|latest|parvaj-*-$arch.AppImage.zsync" \
-        "$appDir" "parvaj-$version-$arch.AppImage"
+        -u "gh-releases-zsync|machitgarha|parvaj|latest|parvaj-*$arch.AppImage.zsync" \
+        "$appDir" "parvaj-$version$arch.AppImage"
 
     cd -
 }
 
-
 # Parse options
-options=$(getopt -l "build-directory:,help,skip-php-build" -o "b:hs" -- "$@")
+options=$(\
+    getopt -l "build-directory:,help,skip-php-build,version:" \
+        -o "b:hsv:" -- "$@" \
+)
 eval set -- "$options"
 
 while true; do
@@ -159,6 +166,10 @@ while true; do
         -s|--skip-php-build)
             skipPhpBuild=true
             ;;
+        -v|--version)
+            shift
+            version="$1"
+            ;;
         --)
             shift
             break
@@ -167,7 +178,7 @@ while true; do
     shift
 done
 
-if [[ $# -lt 4 ]]; then
+if [[ $# -lt 3 ]]; then
     echo "Too few arguments. See --help for more information."
     exit 1
 fi
@@ -175,7 +186,6 @@ fi
 parvajRootPath="$(realpath "$1")"
 phpSourcePath="$(realpath "$2")"
 appimagetool="$(realpath "$3")"
-version="$4"
 
 mkdir -p "$buildDir"
 cd "$buildDir"
