@@ -2,7 +2,7 @@ name: Build release files
 
 on:
     push:
-        tags: '*'
+        tags: "*"
     release:
         types: [created]
 
@@ -16,11 +16,11 @@ jobs:
             -   name: Setup PHP and Phive
                 uses: shivammathur/setup-php@v2
                 with:
-                    php-version: '8.0'
+                    php-version: "8.0"
                     tools: phive
 
             -   name: Install Composer dependencies
-                uses: "ramsey/composer-install@v2"
+                uses: ramsey/composer-install@v2
                 with:
                     composer-options: "--no-dev --optimize-autoloader"
 
@@ -37,5 +37,47 @@ jobs:
                     file: build/parvaj.phar
                     asset_name: parvaj.phar
                     tag: ${{ github.ref }}
-                    overwrite: true
+                    prerelease: true
+
+    make-appimage:
+        env:
+            phpVersion: "8.0.17"
+            appimagetoolDownloadUrl: https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage
+        name: Make AppImage file
+        runs-on: ubuntu-latest
+        steps:
+            -   uses: actions/checkout@v3
+                with:
+                    path: parvaj
+
+            -   name: Clone PHP source
+                uses: actions/checkout@v3
+                with:
+                    repository: php/php-src
+                    path: php
+                    ref: php-${{ env.phpVersion }}
+                    fetch-depth: 2
+
+            -   name: Get appimagetool
+                run: curl -o appimagetool.AppImage "$appimagetoolDownloadUrl"
+
+            -   name: Build with Docker
+                run: |
+                    docker build ./parvaj/build-aux/appimage -t appimage-build
+                    docker run
+                        -e parvajRootPath="./parvaj" \
+                        -e phpSourcePath="./php" \
+                        -e appimagetool="./appimagetool.AppImage" \
+                        --name appimage-build \
+                        appimage-build
+                    docker cp appimage-build:/root/parvaj/build/appimage .
+                    docker rm appimage-build
+
+            -   name: Upload release files
+                uses: svenstaro/upload-release-action@v2
+                with:
+                    repo_token: ${{ secrets.GITHUB_TOKEN }}
+                    file: appimage/*
+                    file_glob: true
+                    tag: ${{ github.ref }}
                     prerelease: true
