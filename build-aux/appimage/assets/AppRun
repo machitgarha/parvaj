@@ -3,4 +3,7 @@
 export LD_LIBRARY_PATH="$APPDIR/usr/lib64":"$LD_LIBRARY_PATH"
 export PATH="$APPDIR/usr/bin":"$PATH"
 
-"$APPDIR/usr/bin/php" -c "$APPDIR/usr/lib" "$APPDIR/parvaj/bin/parvaj" "$@"
+"$APPDIR/usr/bin/php" \
+    -c "$APPDIR/usr/lib" \
+    -d extension_dir="$(realpath "$APPDIR/usr/lib/php/extensions"/*)" \
+    "$APPDIR/parvaj/bin/parvaj" "$@"
