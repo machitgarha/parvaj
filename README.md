@@ -12,9 +12,7 @@ Easy and semi-intelligent VHDL simulation tool, integrating GHDL and GTKWave.
 
     -   ☕ Easy to use. You don't need to remember or look for dependencies everytime, Parvaj does this for you. You wouldn't even need to know most of the GHDL command-line options.
 
-    <!-- TODO: Add this when AppImage is provided:
-    -   ☔ Simple installation process, by providing Phar files.
-    -->
+    -   ☔ Simple installation process, by providing AppImage and Phar files.
 
 -   **Fast:**
 
@@ -32,7 +30,7 @@ Easy and semi-intelligent VHDL simulation tool, integrating GHDL and GTKWave.
 
 There are three methods to install Parvaj: Use the AppImage bundle, use the Phar file, or include it as Git submodule. We only cover the preferred method here. For other methods and why you should choose each, please refer to [installation methods](docs/en/installation.md).
 
-### Use the AppImage Bundle
+## Use the AppImage Bundle
 
 ### Requirements
 
@@ -84,27 +82,40 @@ For example, to simulate a test-bench named `test_multiplexer_2_to_1`, run:
 
 ```bash
 parvaj simulate test_multiplexer_2_to_1
+# Or even shorter:
+parvaj s test_multiplexer_2_to_1
 ```
 
 Woah! Got the magic?
 
-Note that, for the `simulate` command to work correctly, you must be in the project root, not one of its sub-paths. It might be annoying for some, but not implemented yet ([#2](https://github.com/machitgarha/parvaj/issues/2)).
+Note that, for the `simulate` command to work, you must be in the project root, not one of its sub-paths. It might be annoying for some, but not implemented yet ([#2](https://github.com/machitgarha/parvaj/issues/2)).
 
-### Other Options and the Use of Helps
+### Options
 
-You may also want to use specific GHDL options, or some options provided by Parvaj. In this case, you could use the `help` command to see a full list of options with their explanations:
+You may also want to use some of the GHDL's simulation options, or the options provided by Parvaj. You can use the command `help` to see the list of available options:
 
 ```bash
 parvaj help simulate
-# Or
+# Or:
 parvaj simulate --help
 ```
 
-For example, with `--workdir` option, you can change the working directory (which is `build/` by default):
+#### Examples
 
-```bash
-parvaj simulate test_multiplexer_2_to_1 --workdir=obj/
-```
+-   With `--workdir`, you can change the working directory (which is `build/` by default):
+
+    ```bash
+    parvaj simulate test_multiplexer_2_to_1 --workdir=obj/
+    # The order does not matter:
+    parvaj simulate --workdir=obj/ test_multiplexer_2_to_1
+    ```
+
+-   With `--option` or `-o`, you may pass arbitrary simulation options to GHDL:
+
+    ```bash
+    parvaj simulate test_clock_generator -o stop-time=3ns -o vcd-nodate
+    ```
+
 ## Platform Support
 
 Tested platforms include:
