@@ -10,4 +10,5 @@ else
     sudo=""
 fi
 
-$sudo dnf install -y gcc gcc-c++ libxml2-devel libicu-devel oniguruma-devel
+$sudo dnf install -y \
+    autoconf make gcc gcc-c++ libxml2-devel libicu-devel oniguruma-devel
