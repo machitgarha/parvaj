@@ -139,4 +139,4 @@ If you live in Iran, you can make donations [here](https://coffeebede.ir/buycoff
 
 ## License
 
-This is free software. The project is licensed under [AGPL3](./LICENSE.md).
+[![AGPL 3.0](https://www.gnu.org/graphics/agplv3-155x51.png)](./LICENSE.md)
