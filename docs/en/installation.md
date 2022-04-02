@@ -32,10 +32,10 @@ See [here](../../README.md#use-the-appimage-bundle) for instructions.
 
 ### Getting It
 
-1.  Download [Parvaj Phar file](https://github.com/machitgarha/parvaj/releases/download/latest/parvaj.phar).
+1.  Download [Parvaj Phar file](https://github.com/machitgarha/parvaj/releases/latest/download/parvaj.phar).
 
     ```bash
-    wget https://github.com/machitgarha/parvaj/releases/download/latest/parvaj.phar
+    wget https://github.com/machitgarha/parvaj/releases/latest/download/parvaj.phar
     ```
 
 1.  Make it executable.

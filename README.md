@@ -1,6 +1,6 @@
 # Parvaj
 
-[![Version](https://img.shields.io/github/v/release/machitgarha/parvaj?color=darkgreen&label=Version&style=flat-square)](https://github.com/machitgarha/parvaj/releases) [![Available As AppImage](https://img.shields.io/badge/Available%20As-AppImage-lawngreen?style=flat-square)](https://github.com/machitgarha/parvaj/releases/download/latest/parvaj-x86_64.AppImage) [![Available As Phar](https://img.shields.io/badge/Available%20As-Phar-lawngreen?style=flat-square)](https://github.com/machitgarha/parvaj/releases/download/latest/parvaj.phar)
+[![Version](https://img.shields.io/github/v/release/machitgarha/parvaj?color=darkgreen&label=Version&style=flat-square)](https://github.com/machitgarha/parvaj/releases) [![Available As AppImage](https://img.shields.io/badge/Available%20As-AppImage-lawngreen?style=flat-square)](https://github.com/machitgarha/parvaj/releases/latest/download/parvaj-x86_64.AppImage) [![Available As Phar](https://img.shields.io/badge/Available%20As-Phar-lawngreen?style=flat-square)](https://github.com/machitgarha/parvaj/releases/latest/download/parvaj.phar)
 
 Easy and semi-intelligent VHDL simulation tool, integrating GHDL and GTKWave.
 
@@ -45,10 +45,10 @@ sudo dnf install ghdl gtkwave
 
 ### Getting It
 
-1.  Download [latest Parvaj AppImage](https://github.com/machitgarha/parvaj/releases/download/latest/parvaj-x86_64.AppImage).
+1.  Download [latest Parvaj AppImage](https://github.com/machitgarha/parvaj/releases/latest/download/parvaj-x86_64.AppImage).
 
     ```bash
-    wget https://github.com/machitgarha/parvaj/releases/download/latest/parvaj-x86_64.AppImage
+    wget https://github.com/machitgarha/parvaj/releases/latest/download/parvaj-x86_64.AppImage
     ```
 
     **Note:** The AppImage does not provide a GUI, so double-clicking it does nothing.
