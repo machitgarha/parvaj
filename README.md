@@ -1,6 +1,6 @@
 # Parvaj
 
-![Version](https://img.shields.io/github/v/tag/machitgarha/parvaj?color=purple&label=Version&style=flat-square)
+[![Version](https://img.shields.io/github/v/release/machitgarha/parvaj?color=darkgreen&label=Version&style=flat-square)](https://github.com/machitgarha/parvaj/releases) [![Available As AppImage](https://img.shields.io/badge/Available%20As-AppImage-lawngreen?style=flat-square)](https://github.com/machitgarha/parvaj/releases/download/latest/parvaj-x86_64.AppImage) [![Available As Phar](https://img.shields.io/badge/Available%20As-Phar-lawngreen?style=flat-square)](https://github.com/machitgarha/parvaj/releases/download/latest/parvaj.phar)
 
 Easy and semi-intelligent VHDL simulation tool, integrating GHDL and GTKWave.
 
