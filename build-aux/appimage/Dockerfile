@@ -13,3 +13,6 @@ ENTRYPOINT \
     "./$parvajRootPath/build-aux/appimage/install-php-build-prerequisites.sh" \
     && "./$parvajRootPath/build-aux/appimage/build.sh" \
         "$parvajRootPath" "$phpSourcePath" "$appimagetool" "$version"
+
+# Print all the logs
+CMD cat "./$parvajRootPath/build/appimage.log"
