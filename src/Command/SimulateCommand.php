@@ -2,10 +2,8 @@
 
 namespace MAChitgarha\Parvaj\Command;
 
+use MAChitgarha\Parvaj\PathFinder;
 use MAChitgarha\Parvaj\DependencyResolver;
-use MAChitgarha\Parvaj\File\PathGenerator\AbstractFilePath;
-use MAChitgarha\Parvaj\File\PathGenerator\UnitTestFilePath;
-
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputArgument;
@@ -13,53 +11,51 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Process\Process;
 use Symfony\Component\Process\ExecutableFinder;
-
-use Webmozart\PathUtil\Path;
+use Symfony\Component\Filesystem\Path;
 
 class SimulateCommand extends Command
 {
-    protected const NAME = 'simulate';
-    protected const DESCRIPTION = <<<'DESCRIPTION'
-        Simulates a unit-test entity.
+    protected const NAME = "simulate";
+    protected const DESCRIPTION = <<<DESCRIPTION
+        Simulates a test-bench.
         DESCRIPTION;
     // TODO: Add an example
-    protected const HELP = <<<'HELP'
-        Runs a simulation for a particular unit-test entity.
+    protected const HELP = <<<HELP
+        Simulates a test-bench (i.e. unit-test) entity.
 
-        Analyzes all needed source unit files by resolving all dependencies,
-        elaborates and runs the particular unit-test, and dumps the waveform
-        into a file, all with the help of GHDL. At last, it displays the
-        waveform visually in a GtkWave window.
+        Analyzes all required files by resolving all dependencies, elaborates
+        and runs it, makes a waveform file (all with the help of GHDL), and at
+        last, displays the waveform visually via GTKWave.
         HELP;
 
-    protected const ARG_TEST_ENTITY_NAME_NAME = 'test-entity-name';
+    protected const ARG_TEST_ENTITY_NAME_NAME = "test-bench";
     protected const ARG_TEST_ENTITY_NAME_DESCRIPTION =
-        'The name of the unit-test entity.';
+        "Name of the simulating test-bench.";
 
-    protected const OPT_WORKDIR_NAME = 'workdir';
+    protected const OPT_WORKDIR_NAME = "workdir";
     protected const OPT_WORKDIR_DESCRIPTION =
-        'Where temporary files live is the working directory (e.g. object ' . 'files). You can consider it the value of --workdir option passed to ' .
-        'GHDL.';
-    protected const OPT_WORKDIR_DEFAULT = 'build/';
+        "The work directory. Same as GHDL --workdir option. It is where " .
+        "temporaries like object files are placed.";
+    protected const OPT_WORKDIR_DEFAULT = "build/";
 
-    protected const OPT_WAVEFORM_NAME = 'waveform';
+    protected const OPT_WAVEFORM_NAME = "waveform";
     protected const OPT_WAVEFORM_DESCRIPTION =
-        'Which waveform format to be used for the output files. Possible ' .
-        'values are ghw and vcd. Case-sensitive, must be all lowercased.';
-    protected const OPT_WAVEFORM_DEFAULT = 'ghw';
+        "The waveform file format. Either ghw and vcd. Case-insensitive.";
+    protected const OPT_WAVEFORM_DEFAULT = "vcd";
 
-    protected const OPT_NO_O_NAME = 'no-o';
+    protected const OPT_NO_O_NAME = "no-o";
     protected const OPT_NO_O_DESCRIPTION =
-        'Do not use -o option. This pollutes the project directory, but it ' .
-        'useful in the case of GHDL not detecting the option.';
+        "Do not use -o option. It pollutes the project directory, but useful " .
+        "for older GHDL versions where the option is unavailable.";
 
-    protected const OPT_OPTION_NAME = 'option';
-    protected const OPT_OPTION_DESCRIPTION =
-        'Simulation options passed to GHDL when running the test. Some ' . 'options must not be used, or you might get an error during the ' .
-        'process, including --wave, --workdir and -o. It may make seems too ' .
-        'verbose, but for now, there must be exactly one per given option, ' .
-        'or things should not work correctly. An example could be: ' .
-        '--stop-time=3ns.';
+    protected const OPT_SIMULATION_OPTION_NAME = "option";
+    protected const OPT_SIMULATION_OPTION_DESCRIPTION =
+        "Simulation options passed to GHDL at the run step, without the " .
+        "leading dashes. Options used by Parvaj itself must not be used, " .
+        "including 'workdir', 'vcd', 'vcd' and 'o'. There must be exactly ".
+        "one option per --option. The format of the key is 'key=value'. For " .
+        "example, `-o stop-time=3ns` is valid.";
+    protected const OPT_SIMULATION_OPTION_SHORTCUT = "o";
 
     protected function configure()
     {
@@ -98,10 +94,10 @@ class SimulateCommand extends Command
                 static::OPT_NO_O_DESCRIPTION,
             )
             ->addOption(
-                static::OPT_OPTION_NAME,
-                null,
+                static::OPT_SIMULATION_OPTION_NAME,
+                static::OPT_SIMULATION_OPTION_SHORTCUT,
                 InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
-                static::OPT_OPTION_DESCRIPTION,
+                static::OPT_SIMULATION_OPTION_DESCRIPTION,
             )
         ;
     }
@@ -123,18 +119,12 @@ class SimulateCommand extends Command
             static::OPT_NO_O_NAME
         );
         $optionsArray = $input->getOption(
-            static::OPT_OPTION_NAME
+            static::OPT_SIMULATION_OPTION_NAME
         );
 
-        $dependencyResolver = new DependencyResolver(
-            $unitTestEntityPath = UnitTestFilePath::locate(
-                $testEntityName
-            )
-        );
-
-        $unitFilePaths = \array_unique(\iterator_to_array(
-            $dependencyResolver->resolve(), false
-        ));
+        $pathFinder = new PathFinder(".");
+        $unitFilePaths = (new DependencyResolver($pathFinder))
+            ->resolve($testEntityName);
 
         ["ghdl" => $ghdlExec, "gtkwave" => $gtkwaveExec] =
             self::findNecessaryCommands();
@@ -145,7 +135,8 @@ class SimulateCommand extends Command
         self::analyzeEntityFiles($ghdlExec, $unitFilePaths, $workdir);
 
         $waveformFilePath = self::generateWaveformFilePath(
-            $unitTestEntityPath,
+            $workdir,
+            $testEntityName,
             $waveformType,
         );
 
@@ -157,7 +148,7 @@ class SimulateCommand extends Command
             $workdir,
             $waveformType,
             $noO,
-            $optionsArray,
+            self::normalizeSimulationOptions($optionsArray),
         );
 
         $output->writeln("Opening the results in GtkWave...");
@@ -215,14 +206,21 @@ class SimulateCommand extends Command
     }
 
     private static function generateWaveformFilePath(
-        string $testEntityFilePath,
+        string $workdir,
+        string $testEntityName,
         string $waveformType
     ): string {
-        return \str_replace(
-            AbstractFilePath::VHDL_EXTENSION,
-            // TODO: Improve the decision, perhaps with a function?
-            $waveformType,
-            $testEntityFilePath,
+        return Path::join($workdir, "$testEntityName.$waveformType");
+    }
+
+    private static function normalizeSimulationOptions(array $options): array
+    {
+        return \array_map(
+            fn (string $option) => (
+                // Append one or two dashes based on option length
+                \strlen(explode('=', $option)[0]) === 1 ? '-' : '--'
+            ) . $option,
+            $options
         );
     }
 
@@ -235,24 +233,23 @@ class SimulateCommand extends Command
         bool $noO,
         array $options
     ): void {
-        if ($waveformType === 'ghw') {
-            $waveformOption = ["--wave=$outputWaveformFilePath"];
-        } elseif ($waveformType === 'vcd') {
-            $waveformOption = ["--vcd=$outputWaveformFilePath"];
-        } else {
-            throw new \RuntimeException(
-                "Invalid waveform given '$waveformType'"
-            );
-        }
+        $waveformOption = match (\strtolower($waveformType)) {
+            "vcd" => "--vcd=$outputWaveformFilePath",
+            "ghw" => "--wave=$outputWaveformFilePath",
 
-        $oOption = ['-o', Path::join($workdir, $testEntityName)];
+            default => throw new \RuntimeException(
+                "Invalid waveform type '$waveformType'"
+            ),
+        };
+
+        $oOption = ["-o", Path::join($workdir, $testEntityName)];
         if ($noO) {
             $oOption = [];
         }
 
         self::runProcess([
             $ghdlExec, "--elab-run", "--workdir=$workdir", ...$oOption,
-            "$testEntityName", ...$waveformOption, ...$options,
+            $testEntityName, $waveformOption, ...$options,
         ]);
     }
 
