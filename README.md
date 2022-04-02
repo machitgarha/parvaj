@@ -30,41 +30,42 @@ Easy and semi-intelligent VHDL simulation tool, integrating GHDL and GTKWave.
 
 ## Let's Install!
 
-There are two methods to install Parvaj: Use a Phar file, or include it as Git submodule. We only cover the main method here. For other methods, please refer to [installation methods](docs/en/installation.md).
+There are three methods to install Parvaj: Use the AppImage bundle, use the Phar file, or include it as Git submodule. We only cover the preferred method here. For other methods and why you should choose each, please refer to [installation methods](docs/en/installation.md).
 
-### Use a Phar File
+### Use the AppImage Bundle
 
-#### Requirements
+### Requirements
 
--   PHP 8.0+
 -   GHDL
 -   GTKWave
 
-Having a Linux distribution, installing these should be easy. For instance, on Fedora 35, you could simply do:
+Having a Linux distribution, installing these should be easy. On Fedora 35, for example, you could simply do:
 
 ```bash
-sudo dnf install php ghdl gtkwave
+sudo dnf install ghdl gtkwave
 ```
 
-#### Getting It
+### Getting It
 
-1.  Download [Parvaj Phar file](https://github.com/machitgarha/parvaj/releases/download/latest/parvaj.phar).
+1.  Download [latest Parvaj AppImage](https://github.com/machitgarha/parvaj/releases/download/latest/parvaj-x86_64.AppImage).
 
     ```bash
-    wget https://github.com/machitgarha/parvaj/releases/download/latest/parvaj.phar
+    wget https://github.com/machitgarha/parvaj/releases/download/latest/parvaj-x86_64.AppImage
     ```
+
+    **Note:** The AppImage does not provide a GUI, so double-clicking it does nothing.
 
 1.  Make it executable.
 
     ```bash
-    chmod +x parvaj.phar
+    chmod +x parvaj-x86_64.AppImage
     ```
 
 1.  Put it somewhere in your `$PATH`.
 
     ```bash
     # Supposing ~/.local/bin is in your $PATH
-    mv parvaj.phar ~/.local/bin
+    mv parvaj-x86_64.AppImage ~/.local/bin/parvaj
     ```
 
 1.  Done! Make sure the installation was successful:
@@ -106,7 +107,14 @@ parvaj simulate test_multiplexer_2_to_1 --workdir=obj/
 ```
 ## Platform Support
 
-Everything should work fine on Linux-based platforms, and generally Unix-like ones (e.g. OS X). It should run on Windows as well, but not properly tested.
+Tested platforms include:
+
+-   Fedora 28+
+-   Ubuntu 18.04+
+
+Parvaj should work on Linux-based platforms, and also generally Unix-like ones (e.g. OS X, Windows WSL).
+
+It should run on Windows as well, but not properly tested. By the way, it might be hard to install GHDL on Windows than WSL.
 
 ## Contributions? Of Course!
 
@@ -120,7 +128,7 @@ If you live in Iran, you can make donations [here](https://coffeebede.ir/buycoff
 
 ### To-Do
 
--   Distribute as AppImage. No need to install PHP, or even with a seperated statically-bundled version, no need to install GHDL or GTKWave, just download and run it.
+-   Distribute as a completely self-contained AppImage, without the need to install GHDL or GTKWave.
 
 ## License
 
