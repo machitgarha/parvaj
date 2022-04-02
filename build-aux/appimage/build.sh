@@ -48,11 +48,16 @@ arch="x86_64"
 
 buildDir="$here/../../build"
 resultingAppImageDir="$buildDir/appimage"
-logFilePath="$buildDir/appimage.log"
 skipPhpBuild=false
 
 showHelp() {
     echo "$help"
+}
+
+echoSection() {
+    echo
+    echo "---------------------------------------------------------------------"
+    echo "$@"
 }
 
 buildPhp() {
@@ -61,17 +66,17 @@ buildPhp() {
 
     cd "$phpSourcePath"
 
-    echo " Configuring..."
-    ./buildconf --force >> "$logFilePath" 2>&1
-    ./configure --prefix="$installationPrefix" $phpConfigureOptions >> "$logFilePath" 2>&1
+    echoSection " Configuring..."
+    ./buildconf --force
+    ./configure --prefix="$installationPrefix" $phpConfigureOptions
 
-    echo " Making..."
-    make -j "$phpMakeJobsCount" >> "$logFilePath" 2>&1
+    echoSection " Making..."
+    make -j "$phpMakeJobsCount"
 
-    echo " Installing..."
-    make install >> "$logFilePath" 2>&1
+    echoSection " Installing..."
+    make install
 
-    echo " Preparing INI..."
+    echoSection " Preparing INI..."
     iniPath="$installationPrefix/lib/php.ini"
     cp ./php.ini-development "$iniPath"
     customizePhpIni "$iniPath"
@@ -129,8 +134,7 @@ makeAppImage() {
 
     ARCH="$arch" "$appimagetool" \
         -u "gh-releases-zsync|machitgarha|parvaj|latest|parvaj-*-$arch.AppImage.zsync" \
-        "$appDir" "parvaj-$version-$arch.AppImage" \
-        >> "$logFilePath" 2>&1
+        "$appDir" "parvaj-$version-$arch.AppImage"
 
     cd -
 }
@@ -184,22 +188,21 @@ appDir="$(realpath "$appDir")"
 if [ "$skipPhpBuild" != true ]; then
     phpInstallationPath="$appDir/usr"
 
-    echo "Building PHP..."
+    echoSection "Building PHP..."
     buildPhp "$phpSourcePath" "$phpInstallationPath"
 
-    echo "Bundling PHP shared libs..."
+    echoSection "Bundling PHP shared libs..."
     bundlePhpSharedLibraries "$appDir"
 fi
 
-echo "Copying Parvaj root to AppDir..."
+echoSection "Copying Parvaj root to AppDir..."
 copyParvajRootToAppDir "$appDir" "$parvajRootPath"
 
-echo "Copying assets..."
+echoSection "Copying assets..."
 copyAssets "$appDir"
 
-echo "Building AppImage..."
+echoSection "Building AppImage..."
 makeAppImage "$appDir" "$appimagetool" "$version"
 
-echo
-echo "Done!"
-echo "Look into the build directory for the AppImage!"
+echoSection "Done!
+Look into the build directory for the AppImage!"
