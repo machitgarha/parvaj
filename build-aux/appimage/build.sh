@@ -99,11 +99,11 @@ bundlePhpSharedLibraries() {
 
     # 64-bit libraries
     for i in \
-        libcrypt.so.? libstdc++.so.6 libxml2.so.2 libz.so.1 libicuio.so.69 \
+        "libcrypt.so.?" libstdc++.so.6 libxml2.so.2 libz.so.1 libicuio.so.69 \
         libicui18n.so.69 libicuuc.so.69 libicudata.so.69 libonig.so.5 \
         libgcc_s.so.1 liblzma.so.5 \
     ; do
-        cp "/lib64/$i" "$appDir/usr/lib64/$i"
+        cp /lib64/$i "$appDir/usr/lib64/"
     done
 }
 
