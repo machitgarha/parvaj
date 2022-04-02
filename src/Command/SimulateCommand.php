@@ -17,38 +17,36 @@ class SimulateCommand extends Command
 {
     protected const NAME = "simulate";
     protected const DESCRIPTION = <<<DESCRIPTION
-        Simulates an entity.
+        Simulates a test-bench.
         DESCRIPTION;
     // TODO: Add an example
     protected const HELP = <<<HELP
-        Runs a simulation for a particular test-bench entity.
+        Simulates a test-bench (i.e. unit-test) entity.
 
-        Analyzes all required source files by resolving all dependencies,
-        elaborates and runs the particular unit-test, and dumps the waveform
-        into a file, all with the help of GHDL. At last, it displays the
-        waveform visually in a GtkWave window.
+        Analyzes all required files by resolving all dependencies, elaborates
+        and runs it, makes a waveform file (all with the help of GHDL), and at
+        last, displays the waveform visually via GTKWave.
         HELP;
 
-    protected const ARG_TEST_ENTITY_NAME_NAME = "entity-name";
+    protected const ARG_TEST_ENTITY_NAME_NAME = "test-bench";
     protected const ARG_TEST_ENTITY_NAME_DESCRIPTION =
-        "The name of the test-bench entity to get simulated.";
+        "Name of the simulating test-bench.";
 
     protected const OPT_WORKDIR_NAME = "workdir";
     protected const OPT_WORKDIR_DESCRIPTION =
-        "Where temporary files live is the working directory (e.g. object " . "files). You can consider it the value of --workdir option passed to " .
-        "GHDL.";
+        "The work directory. Same as GHDL --workdir option. It is where " .
+        "temporaries like object files are placed.";
     protected const OPT_WORKDIR_DEFAULT = "build/";
 
     protected const OPT_WAVEFORM_NAME = "waveform";
     protected const OPT_WAVEFORM_DESCRIPTION =
-        "Which waveform format to be used for the output files. Possible " .
-        "values are ghw and vcd. Case-sensitive, must be all lowercased.";
+        "The waveform file format. Either ghw and vcd. Case-insensitive.";
     protected const OPT_WAVEFORM_DEFAULT = "vcd";
 
     protected const OPT_NO_O_NAME = "no-o";
     protected const OPT_NO_O_DESCRIPTION =
-        "Do not use -o option. This pollutes the project directory, but it " .
-        "useful in the case of GHDL not detecting the option.";
+        "Do not use -o option. It pollutes the project directory, but useful " .
+        "for older GHDL versions where the option is unavailable.";
 
     protected const OPT_OPTION_NAME = "option";
     protected const OPT_OPTION_DESCRIPTION =
@@ -223,7 +221,7 @@ class SimulateCommand extends Command
         bool $noO,
         array $options
     ): void {
-        $waveformOption = match ($waveformType) {
+        $waveformOption = match (\strtolower($waveformType)) {
             "vcd" => ["--vcd=$outputWaveformFilePath"],
             "ghw" => ["--wave=$outputWaveformFilePath"],
 
