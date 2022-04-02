@@ -1,0 +1,18 @@
+#!/usr/bin/env php
+<?php
+/**
+ * Checks whether the version of the application is in sync with the latest
+ * Git tag. As simple as that.
+ */
+
+use MAChitgarha\Parvaj\Console\Application;
+
+require __DIR__ . "/../vendor/autoload.php";
+
+$appVersion = (new Application())->getVersion();
+$gitVersion = \trim(`git describe --tags --abbrev=0`);
+
+if ($appVersion !== $gitVersion) {
+    echo "'$appVersion' !== '$gitVersion'";
+    exit(1);
+}
