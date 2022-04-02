@@ -65,7 +65,7 @@ jobs:
                 run: |
                     docker build -f ./parvaj/build-aux/appimage/Dockerfile . \
                         -t appimage-build
-                    docker run
+                    docker run \
                         -e parvajRootPath="./parvaj" \
                         -e phpSourcePath="./php" \
                         -e appimagetool="./appimagetool.AppImage" \

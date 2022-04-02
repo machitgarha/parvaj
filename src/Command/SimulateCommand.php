@@ -21,9 +21,9 @@ class SimulateCommand extends Command
         DESCRIPTION;
     // TODO: Add an example
     protected const HELP = <<<HELP
-        Runs a simulation for a particular unit-test entity.
+        Runs a simulation for a particular test-bench entity.
 
-        Analyzes all needed source unit files by resolving all dependencies,
+        Analyzes all required source files by resolving all dependencies,
         elaborates and runs the particular unit-test, and dumps the waveform
         into a file, all with the help of GHDL. At last, it displays the
         waveform visually in a GtkWave window.
