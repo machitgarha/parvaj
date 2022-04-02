@@ -12,4 +12,4 @@ fi
 
 $sudo dnf install -y \
     autoconf make gcc gcc-c++ bison re2c \
-    libxml2-devel libicu-devel oniguruma-devel
+    libxcrypt libxml2-devel libicu-devel oniguruma-devel

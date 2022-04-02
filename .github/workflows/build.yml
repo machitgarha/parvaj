@@ -50,6 +50,11 @@ jobs:
                 with:
                     path: parvaj
 
+            -   name: Install Composer dependencies
+                uses: ramsey/composer-install@v2
+                with:
+                    composer-options: "--no-dev --optimize-autoloader"
+
             -   name: Clone PHP source
                 uses: actions/checkout@v3
                 with:
