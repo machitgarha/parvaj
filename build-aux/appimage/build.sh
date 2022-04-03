@@ -84,10 +84,8 @@ buildPhp() {
     cp ./php.ini-development "$iniPath"
     customizePhpIni "$iniPath"
 
-    echoSection "Cleaning unnecessary stuff..."
-    rm -rf "$installationPrefix/php/man"
-    rm -rf "$installationPrefix/include/php"
-    rm -rf "$installationPrefix/lib/php/build"
+    echoSection "Cleaning up..."
+    minimizePhpInstallationSize "$installationPrefix"
 
     cd -
 }
@@ -96,6 +94,17 @@ customizePhpIni() {
     iniPath="$1"
 
     echo "$phpIniCustomSettings" >> "$iniPath"
+}
+
+minimizePhpInstallationSize() {
+    installationPrefix="$1"
+
+    rm -rf "$installationPrefix/php/man"
+    rm -rf "$installationPrefix/include/php"
+    rm -rf "$installationPrefix/lib/php/build"
+
+    strip -s "$installationPrefix/bin/php"
+    strip -s "$installationPrefix/lib/php/extensions"/**/*.so
 }
 
 bundlePhpSharedLibraries() {
