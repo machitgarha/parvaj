@@ -9,7 +9,7 @@ The preferred method is to use the AppImage. However, each method has its own pr
 |Easy Installation|✅✅|✅||
 |Less Requirements<br/>(Being Self-Contained)|✅✅|✅||
 |Less (Download) Size||✅|✅|
-|Tuned for Performance<br/>(By Default)|✅|||
+|Good Startup Performance||✅|✅|
 |Global Installation|✅|✅||
 |Easy to Update|✅|✅|✅✅|
 |Easy to Use|✅|✅||

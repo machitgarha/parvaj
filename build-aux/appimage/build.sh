@@ -84,6 +84,9 @@ buildPhp() {
     cp ./php.ini-development "$iniPath"
     customizePhpIni "$iniPath"
 
+    echoSection "Cleaning up..."
+    minimizePhpInstallationSize "$installationPrefix"
+
     cd -
 }
 
@@ -93,18 +96,41 @@ customizePhpIni() {
     echo "$phpIniCustomSettings" >> "$iniPath"
 }
 
+minimizePhpInstallationSize() {
+    installationPrefix="$1"
+
+    rm -rf "$installationPrefix/php/man"
+    rm -rf "$installationPrefix/include/php"
+    rm -rf "$installationPrefix/lib/php/build"
+
+    strip -s "$installationPrefix/bin/php"
+    strip -s "$installationPrefix/lib/php/extensions"/**/*.so
+}
+
 bundlePhpSharedLibraries() {
     appDir="$1"
 
     mkdir -p "$appDir/usr/lib64"
 
-    # 64-bit libraries
-    for i in \
-        "libcrypt.so.*" "libstdc++.so.*" "libxml2.so.*" "libz.so.*" \
-        "libicuio.so.*" "libicui18n.so.*" "libicuuc.so.*" "libicudata.so.*" \
-        "libonig.so.*" "libgcc_s.so.*" "liblzma.so.*" \
-    ; do
-        cp /lib64/$i "$appDir/usr/lib64/"
+    # Extract all libraries, which came after an arrow in ldd output
+    lddOutput="$(ldd "$appDir/usr/bin/php")"
+
+    prevWasArrow=false
+    for i in $lddOutput; do
+        # Reached the argument after an arrow, so bundle it
+        if [[ "$prevWasArrow" = true ]]; then
+            # Don't include libc and libm
+            if ! [[ "$i" =~ "libc.so" || "$i" =~ "libm.so" ]]; then
+                cp "$i" "$appDir/usr/$i"
+            fi
+            prevWasArrow=false
+        fi
+
+        if [[ "$i" = "=>" ]]; then
+            prevWasArrow=true
+        else
+            prevWasArrow=false
+        fi
     done
 }
 

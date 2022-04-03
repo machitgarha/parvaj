@@ -11,6 +11,6 @@ else
 fi
 
 $sudo dnf install -y \
-    autoconf make gcc gcc-c++ bison re2c \
+    autoconf make gcc gcc-c++ bison re2c findutils diffutils \
     libxml2-devel libicu-devel oniguruma-devel \
     file appstream
