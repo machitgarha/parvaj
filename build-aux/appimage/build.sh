@@ -98,13 +98,25 @@ bundlePhpSharedLibraries() {
 
     mkdir -p "$appDir/usr/lib64"
 
-    # 64-bit libraries
-    for i in \
-        "libcrypt.so.*" "libstdc++.so.*" "libxml2.so.*" "libz.so.*" \
-        "libicuio.so.*" "libicui18n.so.*" "libicuuc.so.*" "libicudata.so.*" \
-        "libonig.so.*" "libgcc_s.so.*" "liblzma.so.*" \
-    ; do
-        cp /lib64/$i "$appDir/usr/lib64/"
+    # Extract all libraries, which came after an arrow in ldd output
+    lddOutput="$(ldd "$appDir/usr/bin/php")"
+
+    prevWasArrow=false
+    for i in $lddOutput; do
+        # Reached the argument after an arrow, so bundle it
+        if [[ "$prevWasArrow" = true ]]; then
+            # Don't include libc and libm
+            if ! [[ "$i" =~ "libc.so" || "$i" =~ "libm.so" ]]; then
+                cp "$i" "$appDir/usr/$i"
+            fi
+            prevWasArrow=false
+        fi
+
+        if [[ "$i" = "=>" ]]; then
+            prevWasArrow=true
+        else
+            prevWasArrow=false
+        fi
     done
 }
 
@@ -203,9 +215,9 @@ if [ "$skipPhpBuild" != true ]; then
     echoSection "Building PHP..."
     buildPhp "$phpSourcePath" "$phpInstallationPath"
 
-    echoSection "Bundling PHP shared libs..."
-    bundlePhpSharedLibraries "$appDir"
 fi
+echoSection "Bundling PHP shared libs..."
+bundlePhpSharedLibraries "$appDir"
 
 echoSection "Copying Parvaj root to AppDir..."
 copyParvajRootToAppDir "$appDir" "$parvajRootPath"
