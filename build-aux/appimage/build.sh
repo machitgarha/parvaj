@@ -84,6 +84,11 @@ buildPhp() {
     cp ./php.ini-development "$iniPath"
     customizePhpIni "$iniPath"
 
+    echoSection "Cleaning unnecessary stuff..."
+    rm -rf "$installationPrefix/php/man"
+    rm -rf "$installationPrefix/include/php"
+    rm -rf "$installationPrefix/lib/php/build"
+
     cd -
 }
 
@@ -215,9 +220,9 @@ if [ "$skipPhpBuild" != true ]; then
     echoSection "Building PHP..."
     buildPhp "$phpSourcePath" "$phpInstallationPath"
 
+    echoSection "Bundling PHP shared libs..."
+    bundlePhpSharedLibraries "$appDir"
 fi
-echoSection "Bundling PHP shared libs..."
-bundlePhpSharedLibraries "$appDir"
 
 echoSection "Copying Parvaj root to AppDir..."
 copyParvajRootToAppDir "$appDir" "$parvajRootPath"
