@@ -319,7 +319,7 @@ namespace MAChitgarha\Parvaj\PathFinder\Cache;
 
 class Root
 {
-    public const CACHED_PATHS = "@cached_paths";
+    public const CACHED_PATHS = "#cached_paths";
 }
 
 class Unit
