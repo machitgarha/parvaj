@@ -84,6 +84,9 @@ buildPhp() {
     cp ./php.ini-development "$iniPath"
     customizePhpIni "$iniPath"
 
+    echoSection "Bundling PHP shared libs..."
+    bundlePhpSharedLibraries "$appDir"
+
     echoSection "Cleaning up..."
     minimizePhpInstallationSize "$installationPrefix"
 
@@ -232,9 +235,6 @@ if [ "$skipPhpBuild" != true ]; then
 
     echoSection "Building PHP..."
     buildPhp "$phpSourcePath" "$phpInstallationPath"
-
-    echoSection "Bundling PHP shared libs..."
-    bundlePhpSharedLibraries "$appDir"
 fi
 
 echoSection "Copying Parvaj root to AppDir..."
