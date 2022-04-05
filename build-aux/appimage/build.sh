@@ -127,7 +127,7 @@ bundlePhpSharedLibraries() {
         # Reached the argument after an arrow, so bundle it
         if [[ "$prevWasArrow" = true ]]; then
             # Don't include libc and related libraries
-            if ! [[ "$i" =~ "lib(m|c|rt|dl|pthread).so" ]]; then
+            if ! [[ "$i" =~ lib(m|c|rt|dl|pthread).so ]]; then
                 echo "Bundling '$i'..."
                 cp "$i" "$appDir/usr/$i"
             fi
