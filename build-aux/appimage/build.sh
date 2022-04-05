@@ -126,9 +126,11 @@ bundlePhpSharedLibraries() {
     for i in $lddOutput; do
         # Reached the argument after an arrow, so bundle it
         if [[ "$prevWasArrow" = true ]]; then
-            # Don't include libc and libm
-            echo "Bundling '$i'..."
-            cp "$i" "$appDir/usr/$i"
+            # Don't include libc and related libraries
+            if [[ "$i" =~ "lib(m|c|rt|dl|pthread).so" ]]; then
+                echo "Bundling '$i'..."
+                cp "$i" "$appDir/usr/$i"
+            fi
 
             prevWasArrow=false
         fi
