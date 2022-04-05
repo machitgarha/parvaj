@@ -84,6 +84,9 @@ buildPhp() {
     cp ./php.ini-development "$iniPath"
     customizePhpIni "$iniPath"
 
+    echoSection "Bundling PHP shared libs..."
+    bundlePhpSharedLibraries "$appDir"
+
     echoSection "Cleaning up..."
     minimizePhpInstallationSize "$installationPrefix"
 
@@ -115,14 +118,20 @@ bundlePhpSharedLibraries() {
     # Extract all libraries, which came after an arrow in ldd output
     lddOutput="$(ldd "$appDir/usr/bin/php")"
 
+    # For debugging purposes
+    echo "ldd of PHP binary:"
+    echo "$lddOutput"
+
     prevWasArrow=false
     for i in $lddOutput; do
         # Reached the argument after an arrow, so bundle it
         if [[ "$prevWasArrow" = true ]]; then
-            # Don't include libc and libm
-            if ! [[ "$i" =~ "libc.so" || "$i" =~ "libm.so" ]]; then
+            # Don't include libc and related libraries
+            if ! [[ "$i" =~ lib(m|c|rt|dl|pthread).so ]]; then
+                echo "Bundling '$i'..."
                 cp "$i" "$appDir/usr/$i"
             fi
+
             prevWasArrow=false
         fi
 
@@ -228,9 +237,6 @@ if [ "$skipPhpBuild" != true ]; then
 
     echoSection "Building PHP..."
     buildPhp "$phpSourcePath" "$phpInstallationPath"
-
-    echoSection "Bundling PHP shared libs..."
-    bundlePhpSharedLibraries "$appDir"
 fi
 
 echoSection "Copying Parvaj root to AppDir..."
