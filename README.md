@@ -10,13 +10,13 @@ Easy and semi-intelligent VHDL simulation tool, integrating GHDL and GTKWave.
 
     -   💡 Zero-configuration by default. Go ahead and simulate your design!
 
-    -   ☕ Easy to use. You don't need to remember or look for dependencies everytime, Parvaj does this for you. You wouldn't even need to know most of the GHDL command-line options.
+    -   ☕ Easy to use. You don't need to remember or look for dependencies everytime, Parvaj does it for you. You wouldn't even need to know most of the GHDL command-line options.
 
     -   ☔ Simple installation process, by providing AppImage and Phar files.
 
 -   **Fast:**
 
-    -   ⛽ Speed up your development. Don't get your hands dirty by invoking GHDL and GTKWave manually, use the simple `simulate` command instead to do all the steps for you.
+    -   ⛽ Speed up your development. Don't get your hands dirty by invoking GHDL and GTKWave manually; use the simple `simulate` command instead to do all the steps for you.
 
     -   ⚡ The tool itself is designed to have good performance. It uses a proper cache mechanism for this. Although it uses regex patterns for major tasks, thanks to fast PHP regex engine, you wouldn't notice slowdowns.
 
@@ -24,7 +24,7 @@ Easy and semi-intelligent VHDL simulation tool, integrating GHDL and GTKWave.
 
     -   🔥 Automatic detection of dependencies. Forget about what depends on what.
 
-    -   🧠 After finding where a unit (e.g. entity) lives, it remembers it. Don't worry, it is smart enough to check if it was moved around or has been renamed. Just use it!
+    -   🧠 After finding where a unit (e.g. entity) lives, Parvaj remembers it. Don't worry, it is smart enough to check if it was moved around or was renamed. Just use it!
 
 ## Let's Install!
 
