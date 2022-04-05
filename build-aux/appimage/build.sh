@@ -115,12 +115,18 @@ bundlePhpSharedLibraries() {
     # Extract all libraries, which came after an arrow in ldd output
     lddOutput="$(ldd "$appDir/usr/bin/php")"
 
+    # For debugging purposes
+    echo "ldd of PHP binary:"
+    echo "$lddOutput"
+
     prevWasArrow=false
     for i in $lddOutput; do
         # Reached the argument after an arrow, so bundle it
         if [[ "$prevWasArrow" = true ]]; then
             # Don't include libc and libm
+            echo "Bundling '$i'..."
             cp "$i" "$appDir/usr/$i"
+
             prevWasArrow=false
         fi
 
