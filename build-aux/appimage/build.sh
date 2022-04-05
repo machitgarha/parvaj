@@ -120,9 +120,7 @@ bundlePhpSharedLibraries() {
         # Reached the argument after an arrow, so bundle it
         if [[ "$prevWasArrow" = true ]]; then
             # Don't include libc and libm
-            if ! [[ "$i" =~ "libc.so" || "$i" =~ "libm.so" ]]; then
-                cp "$i" "$appDir/usr/$i"
-            fi
+            cp "$i" "$appDir/usr/$i"
             prevWasArrow=false
         fi
 
