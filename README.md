@@ -42,6 +42,11 @@ Having a Linux distribution, installing these should be easy. On Fedora 35, for 
 ```bash
 sudo dnf install ghdl gtkwave
 ```
+On Arch the gtkwave can be install through pacman and GHDL through [AUR](https://aur.archlinux.org/packages/ghdl-gcc-git):
+```bash
+sudo pacman -S gtkwave
+yay -S ghdl-gcc-git
+```
 
 ### Getting It
 
@@ -52,7 +57,8 @@ sudo dnf install ghdl gtkwave
     ```
 
     **Note:** The AppImage does not provide a GUI, so double-clicking it does nothing.
-
+    
+    **Note:** For the Arch make sure to install [AppImageLauncher<sup>AUR</sup>](https://aur.archlinux.org/packages/appimagelauncher) first.
 1.  Make it executable.
 
     ```bash
@@ -122,6 +128,7 @@ Tested platforms include:
 
 -   Fedora 28+
 -   Ubuntu 18.04+
+-   Arch 6.2.2-zen2-1-zen+
 
 Parvaj should work on Linux-based platforms, and also generally Unix-like ones (e.g. OS X, Windows WSL).
 
