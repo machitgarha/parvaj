@@ -40,6 +40,9 @@ abstract class GhdlRunner
         ))->run();
     }
 
+    /**
+     * @todo Remove VCD file after this step, because of being huge in size.
+     */
     public function elabRun(string $testEntityName, ElabRunUserOptions $userOptions): string
     {
         (new Process(
