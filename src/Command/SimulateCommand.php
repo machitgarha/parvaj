@@ -50,11 +50,6 @@ class SimulateCommand extends Command
         "The waveform file format. Either ghw and vcd. Case-insensitive.";
     protected const OPT_WAVEFORM_DEFAULT = "vcd";
 
-    protected const OPT_NO_O_NAME = "no-o";
-    protected const OPT_NO_O_DESCRIPTION =
-        "Do not use -o option. It pollutes the project directory, but useful " .
-        "for older GHDL versions where the option is unavailable.";
-
     protected const OPT_SIMULATION_OPTION_NAME = "option";
     protected const OPT_SIMULATION_OPTION_DESCRIPTION =
         "Simulation options passed to GHDL at the run step, without the " .
@@ -95,12 +90,6 @@ class SimulateCommand extends Command
                 static::OPT_WAVEFORM_DEFAULT,
             )
             ->addOption(
-                static::OPT_NO_O_NAME,
-                null,
-                InputOption::VALUE_NONE,
-                static::OPT_NO_O_DESCRIPTION,
-            )
-            ->addOption(
                 static::OPT_SIMULATION_OPTION_NAME,
                 static::OPT_SIMULATION_OPTION_SHORTCUT,
                 InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
@@ -121,9 +110,6 @@ class SimulateCommand extends Command
         );
         $waveformType = $input->getOption(
             static::OPT_WAVEFORM_NAME
-        );
-        $noO = $input->getOption(
-            static::OPT_NO_O_NAME
         );
         $simulationOptions = $input->getOption(
             static::OPT_SIMULATION_OPTION_NAME
