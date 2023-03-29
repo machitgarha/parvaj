@@ -8,9 +8,13 @@ use MAChitgarha\Phirs\DirectoryProviderFactory;
 
 use MAChitgarha\Phirs\Util\Platform;
 
+use Noodlehaus\Exception\FileNotFoundException;
+
 use Noodlehaus\Parser\Json;
 
-final class Config
+use Symfony\Component\Console\Exception\RuntimeException;
+
+final class Config extends \Noodlehaus\Config
 {
     private const FILE_NAME = "config.json";
 
@@ -21,29 +25,37 @@ final class Config
     ];
 
     public string $filePath;
-    private \Noodlehaus\Config $config;
 
     public function __construct()
     {
-        $dir = DirectoryProviderFactory::createStandard(Platform::autoDetect())->getConfigPath() . "/parvaj";
-        Pusheh::createDirRecursive($dir);
-
-        $this->filePath = $dir . "/" . self::FILE_NAME;
-        $this->config = new \Noodlehaus\Config($this->filePath, new Json());
+        parent::__construct(
+            $this->filePath = self::makeFile(),
+            new Json()
+        );
     }
 
-    public function get(string $key): mixed
+    private static function makeFile(): string
     {
-        return $this->config->get($key)
-            ?? throw new \Exception("Config '$key' not set");
+        $filePath = DirectoryProviderFactory::createStandard(Platform::autoDetect())->getConfigPath()
+            . "/parvaj/" . self::FILE_NAME;
+
+        if (!\is_readable($filePath)) {
+            Pusheh::createDirRecursive(\dirname($filePath));
+            if (!\file_put_contents($filePath, "{}")) {
+                throw new RuntimeException("Cannot write to config file");
+            }
+        }
+
+        return $filePath;
     }
 
-    public function set(string $key, mixed $value): void
+    public function get($key, $default = null)
     {
-        $this->config->set($key, $value);
+        return parent::get($key, $default)
+            ?? throw new RuntimeException("Config '$key' not set");
     }
 
-    public static function isValid(string $key): bool
+    public static function isKeyValid(string $key): bool
     {
         return \in_array($key, self::VALID_KEYS, true);
     }
@@ -60,6 +72,6 @@ final class Config
 
     public function __destruct()
     {
-        $this->config->toFile($this->filePath);
+        parent::toFile($this->filePath);
     }
 }

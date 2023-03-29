@@ -55,7 +55,7 @@ class ConfigCommand extends Command
         $name = $input->getArgument(static::ARG_NAME_NAME);
         $value = $input->getArgument(static::ARG_VALUE_NAME);
 
-        if (!Config::isValid($name)) {
+        if (!Config::isKeyValid($name)) {
             throw new InvalidArgumentException("Invalid option name '$name'");
         }
 

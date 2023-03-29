@@ -2,17 +2,25 @@
 
 namespace MAChitgarha\Parvaj\Command;
 
+use InvalidArgumentException;
+
 use MAChitgarha\Component\Pusheh;
 
 use MAChitgarha\Parvaj\Config;
+use MAChitgarha\Parvaj\Console\Application;
+
 use MAChitgarha\Parvaj\PathFinder;
 use MAChitgarha\Parvaj\DependencyResolver;
+use MAChitgarha\Parvaj\Runner\Ghdl\GhdlRunner;
+use MAChitgarha\Parvaj\Runner\Ghdl\GhdlVersion;
 use MAChitgarha\Parvaj\Runner\Ghdl\ElabRunUserOptions;
 use MAChitgarha\Parvaj\Runner\Ghdl\GhdlRunnerFactory;
 use MAChitgarha\Parvaj\Runner\Gtkwave\GtkwaveRunnerFactory;
 use MAChitgarha\Parvaj\Util\ExecutableFinder;
 
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Exception\RuntimeException;
+
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -47,7 +55,7 @@ class SimulateCommand extends Command
 
     protected const OPT_WAVEFORM_NAME = "waveform";
     protected const OPT_WAVEFORM_DESCRIPTION =
-        "The waveform file format. Either ghw and vcd. Case-insensitive.";
+        "The waveform file format. Either ghw or vcd. Case-insensitive.";
     protected const OPT_WAVEFORM_DEFAULT = "vcd";
 
     protected const OPT_SIMULATION_OPTION_NAME = "option";
@@ -98,10 +106,8 @@ class SimulateCommand extends Command
         ;
     }
 
-    protected function execute(
-        InputInterface $input,
-        OutputInterface $output
-    ): int {
+    protected function execute(InputInterface $input, OutputInterface $output): int
+    {
         $testEntityName = $input->getArgument(
             static::ARG_TEST_ENTITY_NAME_NAME
         );
@@ -119,8 +125,8 @@ class SimulateCommand extends Command
         $unitFilePaths = (new DependencyResolver($pathFinder))
             ->resolve($testEntityName);
 
-        $config = new Config();
         $executableFinder = new ExecutableFinder();
+        $config = $this->buildConfig($input, $output, $executableFinder);
 
         $ghdlRunner = GhdlRunnerFactory::create($executableFinder, $config);
         $gtkwaveRunner = GtkwaveRunnerFactory::create($executableFinder);
@@ -140,5 +146,33 @@ class SimulateCommand extends Command
         $gtkwaveRunner->open($waveformFilePath, $waveformType);
 
         return 0;
+    }
+
+    private function buildConfig(
+        InputInterface $input,
+        OutputInterface $output,
+        ExecutableFinder $executableFinder
+    ): Config {
+        $config = new Config();
+
+        if (!$config->has(Config::KEY_GHDL_VERSION)) {
+            $output->writeln("GHDL version not set, auto-detecting...");
+
+            [$versionString, $majorVersion] = GhdlRunner::detectVersion($executableFinder);
+            $output->writeln("Detected GHDL version: $versionString");
+
+            try {
+                $config->setGhdlVersion(GhdlVersion::fromMajorVersion($majorVersion));
+            } catch (InvalidArgumentException) {
+                throw new RuntimeException(
+                    "The GHDL version is not supported yet" . PHP_EOL .
+                    "Feel free to open an issue here: " . Application::ISSUES_PAGE_LINK
+                );
+            }
+
+            $output->writeln("");
+        }
+
+        return $config;
     }
 }

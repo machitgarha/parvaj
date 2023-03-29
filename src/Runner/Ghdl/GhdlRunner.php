@@ -5,9 +5,11 @@ namespace MAChitgarha\Parvaj\Runner\Ghdl;
 use MAChitgarha\Parvaj\Runner\OptionBuilder;
 
 use MAChitgarha\Parvaj\Util\Process;
+use MAChitgarha\Parvaj\Util\ExecutableFinder;
 
 use MAChitgarha\Parvaj\WaveformType;
 
+use Symfony\Component\Console\Exception\RuntimeException;
 use Symfony\Component\Console\Exception\InvalidOptionException;
 
 use Symfony\Component\Filesystem\Path;
@@ -37,7 +39,7 @@ abstract class GhdlRunner
                 ]),
                 ...$unitFilePaths
             ]
-        ))->run();
+        ))->runSafe();
     }
 
     /**
@@ -63,7 +65,7 @@ abstract class GhdlRunner
                     )
                 ),
             ]
-        ))->run();
+        ))->runSafe();
 
         return $waveformFilePath;
     }
@@ -92,5 +94,23 @@ abstract class GhdlRunner
             $waveformOption,
             $userOptions->getSimulationOptions(),
         );
+    }
+
+    /**
+     * @return array<string,int> Pair of GHDL raw version string, and the major
+     * version.
+     */
+    public static function detectVersion(ExecutableFinder $executableFinder): array
+    {
+        $ghdlExecutable = $executableFinder->find("ghdl");
+
+        $ghdlVersionProcess = new Process([$ghdlExecutable, "--version"]);
+        $ghdlVersionProcess->run();
+        $output = $ghdlVersionProcess->getCompleteOutput();
+
+        if (\preg_match("/GHDL +((\d+)\.\d+(\.\d+)?([\-_]dev)?)/i", $output, $match)) {
+            return [$match[1], (int)($match[2])];
+        }
+        throw new RuntimeException("Cannot detect GHDL version");
     }
 }

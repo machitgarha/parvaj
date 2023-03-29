@@ -28,6 +28,6 @@ class GtkwaveRunner
                 ...OptionBuilder::build($options),
                 $waveformFilePath,
             ]
-        ))->run();
+        ))->runSafe();
     }
 }
