@@ -2,6 +2,7 @@
 
 namespace MAChitgarha\Parvaj\Console;
 
+use MAChitgarha\Parvaj\Command\ConfigCommand;
 use MAChitgarha\Parvaj\Command\SimulateCommand;
 
 class Application extends \Symfony\Component\Console\Application
@@ -19,6 +20,7 @@ class Application extends \Symfony\Component\Console\Application
     private function addAllCommands()
     {
         $this->addCommands([
+            new ConfigCommand(),
             new SimulateCommand(),
         ]);
     }

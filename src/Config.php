@@ -16,6 +16,10 @@ final class Config
 
     public const KEY_GHDL_VERSION = "ghdl.version";
 
+    private const VALID_KEYS = [
+        self::KEY_GHDL_VERSION,
+    ];
+
     public string $filePath;
     private \Noodlehaus\Config $config;
 
@@ -28,15 +32,20 @@ final class Config
         $this->config = new \Noodlehaus\Config($this->filePath, new Json());
     }
 
-    private function get(string $key): mixed
+    public function get(string $key): mixed
     {
         return $this->config->get($key)
             ?? throw new \Exception("Config '$key' not set");
     }
 
-    private function set(string $key, mixed $value)
+    public function set(string $key, mixed $value): void
     {
         $this->config->set($key, $value);
+    }
+
+    public static function isValid(string $key): bool
+    {
+        return \in_array($key, self::VALID_KEYS, true);
     }
 
     public function getGhdlVersion(): int
@@ -47,5 +56,10 @@ final class Config
     public function setGhdlVersion(int $ghdlVersion): void
     {
         $this->set(self::KEY_GHDL_VERSION, $ghdlVersion);
+    }
+
+    public function __destruct()
+    {
+        $this->config->toFile($this->filePath);
     }
 }
