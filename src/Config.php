@@ -5,14 +5,12 @@ namespace MAChitgarha\Parvaj;
 use MAChitgarha\Component\Pusheh;
 
 use MAChitgarha\Phirs\DirectoryProviderFactory;
-
 use MAChitgarha\Phirs\Util\Platform;
-
-use Noodlehaus\Exception\FileNotFoundException;
 
 use Noodlehaus\Parser\Json;
 
 use Symfony\Component\Console\Exception\RuntimeException;
+use Symfony\Component\Filesystem\Path;
 
 final class Config extends \Noodlehaus\Config
 {
@@ -36,12 +34,14 @@ final class Config extends \Noodlehaus\Config
 
     private static function makeFile(): string
     {
-        $filePath = DirectoryProviderFactory::createStandard(Platform::autoDetect())->getConfigPath()
-            . "/parvaj/" . self::FILE_NAME;
+        $filePath = Path::join(
+            $dir = DirectoryProviderFactory::createStandard(Platform::autoDetect())->getConfigPath(),
+            "parvaj/" . self::FILE_NAME,
+        );
 
         if (!\is_readable($filePath)) {
-            Pusheh::createDirRecursive(\dirname($filePath));
-            if (!\file_put_contents($filePath, "{}")) {
+            Pusheh::createDirRecursive($dir);
+            if (!@\file_put_contents($filePath, "{}")) {
                 throw new RuntimeException("Cannot write to config file");
             }
         }

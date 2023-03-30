@@ -10,7 +10,6 @@ use MAChitgarha\Parvaj\Util\ExecutableFinder;
 use MAChitgarha\Parvaj\WaveformType;
 
 use Symfony\Component\Console\Exception\RuntimeException;
-use Symfony\Component\Console\Exception\InvalidOptionException;
 
 use Symfony\Component\Filesystem\Path;
 
@@ -97,7 +96,7 @@ abstract class GhdlRunner
     }
 
     /**
-     * @return array<string,int> Pair of GHDL raw version string, and the major
+     * @return array{0:string,1:int} Pair of GHDL raw version string, and the major
      * version.
      */
     public static function detectVersion(ExecutableFinder $executableFinder): array

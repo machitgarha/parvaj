@@ -3,7 +3,6 @@
 namespace MAChitgarha\Parvaj\Runner\Ghdl\VersionSpecific;
 
 use MAChitgarha\Parvaj\Runner\Ghdl\GhdlRunner;
-use MAChitgarha\Parvaj\Runner\Ghdl\ElabRunUserOptions;
 
 class GhdlRunnerV0 extends GhdlRunner
 {

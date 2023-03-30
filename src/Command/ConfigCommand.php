@@ -5,9 +5,7 @@ namespace MAChitgarha\Parvaj\Command;
 use MAChitgarha\Parvaj\Config;
 
 use Symfony\Component\Console\Command\Command;
-
 use Symfony\Component\Console\Exception\InvalidArgumentException;
-
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -67,15 +65,5 @@ class ConfigCommand extends Command
         }
 
         return 0;
-    }
-
-    protected function executeGet(InputInterface $input, OutputInterface $output, string $validName): void
-    {
-        $config = new Config();
-    }
-
-    protected function executeSet(InputInterface $input, OutputInterface $output, string $validName, string $value): int
-    {
-
     }
 }
