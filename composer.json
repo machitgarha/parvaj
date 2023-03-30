@@ -1,6 +1,6 @@
 {
     "name": "machitgarha/parvaj",
-    "description": "Easy and semi-intelligent VHDL simulation tool, integrating GHDL and GTKWave",
+    "description": "Easy and fast VHDL simulation tool, integrating GHDL and GTKWave",
     "type": "project",
     "homepage": "https://github.com/machitgarha/parvaj",
     "license": "AGPL-3.0",
@@ -25,6 +25,7 @@
         }
     },
     "require-dev": {
-        "phan/phan": "^5.3"
+        "php": "^8.0",
+        "phan/phan": "^5.4"
     }
 }
