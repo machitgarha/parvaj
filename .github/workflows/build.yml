@@ -41,7 +41,7 @@ jobs:
 
     make-appimage:
         env:
-            phpVersion: "8.0.19"
+            phpVersion: "8.0.28"
             appimagetoolDownloadUrl: https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage
         name: Make AppImage file
         runs-on: ubuntu-latest

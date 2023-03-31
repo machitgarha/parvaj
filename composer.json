@@ -9,6 +9,11 @@
         "email": "machitgarha@outlook.com",
         "role": "Maintainer"
     }],
+    "config": {
+        "platform": {
+            "php": "8.0.28"
+        }
+    },
     "require": {
         "php": "^8.0",
         "symfony/process": "^5.4",
