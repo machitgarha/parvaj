@@ -174,9 +174,14 @@ makeAppImage() {
     mkdir -p "$resultingAppImageDir"
     cd "$resultingAppImageDir"
 
+    output="parvaj-$version$arch.AppImage"
+
     ARCH="$arch" "$appimagetool" \
         -u "gh-releases-zsync|machitgarha|parvaj|latest|parvaj-*$arch.AppImage.zsync" \
-        "$appDir" "parvaj-$version$arch.AppImage"
+        "$appDir" "$output"
+
+    # Thanks to https://github.com/AppImage/AppImageKit/issues/828#issuecomment-731895751
+    sed "0,/AI\x02/{s|AI\x02|\x00\x00\x00|}" -i "$output"
 
     cd -
 }
