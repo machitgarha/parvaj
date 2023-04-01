@@ -7,8 +7,8 @@ on:
         types: [created]
 
 jobs:
-    make-phar:
-        name: Make Phar file using Box
+    build-phar:
+        name: Build Phar file using Box
         runs-on: ubuntu-latest
         steps:
             -   uses: actions/checkout@v3
@@ -40,11 +40,11 @@ jobs:
                     tag: ${{ github.ref }}
                     prerelease: true
 
-    make-appimage:
+    build-appimage:
+        name: Build AppImage file
         env:
             phpVersion: "8.0.28"
             appimagetoolDownloadUrl: https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage
-        name: Make AppImage file
         runs-on: ubuntu-latest
         steps:
             -   uses: actions/checkout@v3
