@@ -3,9 +3,9 @@ name: Build release files
 on:
   push:
     tags:
-      - *.*.*-alpha.*
-      - *.*.*-beta.*
-      - *.*.*-rc.*
+      - "*.*.*-alpha.*"
+      - "*.*.*-beta.*"
+      - "*.*.*-rc.*"
   release:
     types: [created]
 
