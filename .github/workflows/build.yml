@@ -25,7 +25,7 @@ jobs:
                     composer-options: "--no-dev --optimize-autoloader"
 
             -   name: Install Box using Phive
-                run: phive install humbug/box --force-accept-unsigned
+                run: phive --no-progress install humbug/box --trust-gpg-keys 41539BBD4020945DB378F98B2DF45277AEF09A2F
 
             -   name: Build Phar
                 run: ./tools/box compile
