@@ -2,12 +2,15 @@
 
 namespace MAChitgarha\Parvaj\Console;
 
+use MAChitgarha\Parvaj\Command\ConfigCommand;
 use MAChitgarha\Parvaj\Command\SimulateCommand;
 
 class Application extends \Symfony\Component\Console\Application
 {
     public const NAME = "Parvaj";
-    public const VERSION = "0.3.2";
+    public const VERSION = "0.4.0";
+
+    public const ISSUES_PAGE_LINK = "https://github.com/machitgarha/parvaj/issues";
 
     public function __construct()
     {
@@ -19,6 +22,7 @@ class Application extends \Symfony\Component\Console\Application
     private function addAllCommands()
     {
         $this->addCommands([
+            new ConfigCommand(),
             new SimulateCommand(),
         ]);
     }

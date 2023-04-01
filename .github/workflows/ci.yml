@@ -1,48 +1,48 @@
 name: CI
 
 on:
-    push:
-        tags: "*"
-        branches:
-            - master
-            - develop
-    pull_request:
-        branches:
-            - develop
+  push:
+    tags: "*"
+    branches:
+      - master
+      - develop
+  pull_request:
+    branches:
+      - develop
 
 jobs:
-    static-analysis:
-        name: Phan Static Analysis
-        runs-on: ubuntu-latest
-        steps:
-            -   uses: actions/checkout@v3
+  static-analysis:
+    name: Phan Static Analysis
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
 
-            -   name: Setup PHP with Phan
-                uses: shivammathur/setup-php@v2
-                with:
-                    php-version: "8.0"
-                    tools: phan
+      - name: Setup PHP with Phan
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.0"
+          tools: phan
 
-            -   name: Install Composer dependencies
-                uses: ramsey/composer-install@v2
+      - name: Install Composer dependencies
+        uses: ramsey/composer-install@v2
 
-            -   name: Run Phan
-                run: phan
+      - name: Run Phan
+        run: phan
 
-    check-version:
-        name: Ensures the app version is in sync with Git version
-        runs-on: ubuntu-latest
-        steps:
-            -   uses: actions/checkout@v3
-                with:
-                    fetch-depth: 0
+  check-version:
+    name: Ensures the app version is in sync with Git version
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
 
-            -   name: Setup PHP
-                uses: shivammathur/setup-php@v2
-                with:
-                    php-version: "8.0"
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.0"
 
-            -   name: Install Composer dependencies
-                uses: ramsey/composer-install@v2
+      - name: Install Composer dependencies
+        uses: ramsey/composer-install@v2
 
-            -   run: ./bin/check-version
+      - run: ./bin/check-version
