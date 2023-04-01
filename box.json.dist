@@ -1,5 +1,4 @@
 {
     "main": "bin/parvaj",
-    "output": "build/parvaj.phar",
-    "compression": "GZ"
+    "output": "build/parvaj.phar"
 }
