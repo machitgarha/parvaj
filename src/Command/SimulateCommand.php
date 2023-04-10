@@ -127,7 +127,7 @@ class SimulateCommand extends Command
         $config = $this->buildConfig($input, $output, $executableFinder);
 
         $ghdlRunner = GhdlRunnerFactory::create($executableFinder, $config);
-        $gtkwaveRunner = GtkwaveRunnerFactory::create($executableFinder);
+        $gtkwaveRunner = GtkwaveRunnerFactory::create($executableFinder, $config);
 
         Pusheh::createDirRecursive($workdir);
 

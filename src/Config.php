@@ -17,9 +17,11 @@ final class Config extends \Noodlehaus\Config
     private const FILE_NAME = "config.json";
 
     public const KEY_GHDL_VERSION = "ghdl.version";
+    public const KEY_GTKWAVE_CMDLINE = "gtkwave.cmdline";
 
     private const VALID_KEYS = [
         self::KEY_GHDL_VERSION,
+        self::KEY_GTKWAVE_CMDLINE,
     ];
 
     public string $filePath;
