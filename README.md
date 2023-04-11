@@ -37,7 +37,7 @@ There are three methods to install Parvaj: Use the AppImage bundle, use the Phar
 -   GHDL
 -   GTKWave
 
-Having a Linux distribution, installing these should be easy. On Fedora 35, for example, you could simply do:
+Having a GNU/Linux distribution, installing these should be easy. On Fedora 35, for example, you could simply do:
 
 ```bash
 sudo dnf install ghdl gtkwave
@@ -115,6 +115,16 @@ parvaj simulate --help
     ```bash
     parvaj simulate test_clock_generator -o stop-time=3ns -o vcd-nodate
     ```
+
+### Other Commands
+
+Although Parvaj is designed to work mostly config-free, you can configure a few things:
+
+-   `gtkwave.cmdline`: If set, this command is used to run GTKWave. This is useful if you want to use a different application for viewing waveforms, or having problems with the default invocation command.
+
+    For instance, on MacOS, you can set it to `open`.
+
+-   `ghdl.version`: GHDL version should be auto-detected, but this sets its major version.
 
 ## Platform Support
 
