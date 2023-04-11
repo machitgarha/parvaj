@@ -57,6 +57,11 @@ final class Config extends \Noodlehaus\Config
             ?? throw new RuntimeException("Config '$key' not set");
     }
 
+    public function isNonNull(string $key): bool
+    {
+        return $this->has($key) && parent::get($key) !== null;
+    }
+
     public static function isKeyValid(string $key): bool
     {
         return \in_array($key, self::VALID_KEYS, true);

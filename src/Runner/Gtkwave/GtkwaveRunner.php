@@ -18,7 +18,7 @@ class GtkwaveRunner
 
     public function open(string $waveformFilePath, string $waveformType): void
     {
-        if ($this->config->has(Config::KEY_GTKWAVE_CMDLINE)) {
+        if ($this->config->isNonNull(Config::KEY_GTKWAVE_CMDLINE)) {
             $command = [
                 $this->config->get(Config::KEY_GTKWAVE_CMDLINE),
                 $waveformFilePath,
