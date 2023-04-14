@@ -17,9 +17,11 @@ final class Config extends \Noodlehaus\Config
     private const FILE_NAME = "config.json";
 
     public const KEY_GHDL_VERSION = "ghdl.version";
+    public const KEY_GTKWAVE_CMDLINE = "gtkwave.cmdline";
 
     private const VALID_KEYS = [
         self::KEY_GHDL_VERSION,
+        self::KEY_GTKWAVE_CMDLINE,
     ];
 
     public string $filePath;
@@ -35,8 +37,11 @@ final class Config extends \Noodlehaus\Config
     private static function makeFile(): string
     {
         $filePath = Path::join(
-            $dir = DirectoryProviderFactory::createStandard(Platform::autoDetect())->getConfigPath(),
-            "parvaj/" . self::FILE_NAME,
+            $dir = Path::join(
+                DirectoryProviderFactory::createStandard(Platform::autoDetect())->getConfigPath(),
+                "parvaj",
+            ),
+            self::FILE_NAME,
         );
 
         if (!\is_readable($filePath)) {
@@ -53,6 +58,11 @@ final class Config extends \Noodlehaus\Config
     {
         return parent::get($key, $default)
             ?? throw new RuntimeException("Config '$key' not set");
+    }
+
+    public function isNonNull(string $key): bool
+    {
+        return $this->has($key) && parent::get($key) !== null;
     }
 
     public static function isKeyValid(string $key): bool

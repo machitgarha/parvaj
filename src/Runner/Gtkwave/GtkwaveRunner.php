@@ -2,32 +2,40 @@
 
 namespace MAChitgarha\Parvaj\Runner\Gtkwave;
 
+use MAChitgarha\Parvaj\Config;
 use MAChitgarha\Parvaj\Runner\OptionBuilder;
-
+use MAChitgarha\Parvaj\Util\ExecutableFinder;
 use MAChitgarha\Parvaj\WaveformType;
-
 use MAChitgarha\Parvaj\Util\Process;
 
 class GtkwaveRunner
 {
     public function __construct(
-        private string $executable,
+        private ExecutableFinder $executableFinder,
+        private Config $config,
     ) {
     }
 
     public function open(string $waveformFilePath, string $waveformType): void
     {
-        $options = [];
-        if ($waveformType === WaveformType::VCD) {
-            $options["o"] = null;
-        }
+        if ($this->config->isNonNull(Config::KEY_GTKWAVE_CMDLINE)) {
+            $command = [
+                $this->config->get(Config::KEY_GTKWAVE_CMDLINE),
+                $waveformFilePath,
+            ];
+        } else {
+            $options = [];
+            if ($waveformType === WaveformType::VCD) {
+                $options["o"] = null;
+            }
 
-        (new Process(
-            [
-                $this->executable,
+            $command = [
+                $this->executableFinder->find("gtkwave"),
                 ...OptionBuilder::build($options),
                 $waveformFilePath,
-            ]
-        ))->runSafe();
+            ];
+        }
+
+        (new Process($command))->runSafe();
     }
 }

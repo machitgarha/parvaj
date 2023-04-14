@@ -68,14 +68,16 @@ class PathFinder
     public function __construct(string $rootPath)
     {
         $this->rootPath = \realpath($rootPath);
-        $this->cache = self::makeCache($rootPath);
+        $this->cache = self::makeCache($this->rootPath);
     }
 
     private static function makeCache(string $rootPath): FilesystemAdapter
     {
+        $namespace = \preg_replace("/[^\-+_.A-Za-z0-9]/", "_+.+_", $rootPath);
+
         return new FilesystemAdapter(
             directory: self::makeCachePath(),
-            namespace: $rootPath,
+            namespace: $namespace,
         );
     }
 

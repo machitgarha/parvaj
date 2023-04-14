@@ -61,7 +61,11 @@ class ConfigCommand extends Command
         if (!isset($value)) {
             $output->writeln($config->get($name));
         } else {
-            $config->set($name, $value);
+            if (!empty($value)) {
+                $config->set($name, $value);
+            } else {
+                $config->remove($name);
+            }
         }
 
         return 0;

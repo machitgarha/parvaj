@@ -15,7 +15,7 @@ use Symfony\Component\Filesystem\Path;
 
 abstract class GhdlRunner
 {
-    private string $workdir = "build";
+    protected string $workdir = "build";
 
     public function __construct(
         protected string $executable,
@@ -78,7 +78,6 @@ abstract class GhdlRunner
     {
         return [
             "workdir" => $this->workdir,
-            "o" => Path::join($this->workdir, $testEntityName),
         ];
     }
 
