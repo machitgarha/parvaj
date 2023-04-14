@@ -3,11 +3,7 @@ name: Build release files
 on:
   push:
     tags:
-      - "*.*.*-alpha.*"
-      - "*.*.*-beta.*"
-      - "*.*.*-rc.*"
-  release:
-    types: [created]
+      - "*"
 
 jobs:
   build-phar:
@@ -94,3 +90,4 @@ jobs:
           file_glob: true
           tag: ${{ github.ref }}
           prerelease: true
+
