@@ -37,8 +37,11 @@ final class Config extends \Noodlehaus\Config
     private static function makeFile(): string
     {
         $filePath = Path::join(
-            $dir = DirectoryProviderFactory::createStandard(Platform::autoDetect())->getConfigPath(),
-            "parvaj/" . self::FILE_NAME,
+            $dir = Path::join(
+                DirectoryProviderFactory::createStandard(Platform::autoDetect())->getConfigPath(),
+                "parvaj",
+            ),
+            self::FILE_NAME,
         );
 
         if (!\is_readable($filePath)) {
