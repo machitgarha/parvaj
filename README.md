@@ -37,7 +37,7 @@ There are three methods to install Parvaj: Use the AppImage bundle, use the Phar
 -   GHDL
 -   GTKWave
 
-Having a GNU/Linux distribution, installing these should be easy. On Fedora 35, for example, you could simply do:
+Having a GNU/Linux distribution, installing these should be easy. On Fedora 37, for example, you could simply do:
 
 ```bash
 sudo dnf install ghdl gtkwave
@@ -78,7 +78,7 @@ Throughout this document, it is supposed you installed Parvaj using this method.
 
 The primary Parvaj command is `simulate`. It simulates a test-bench for you, given its name. Yes, it is really that simple!
 
-For example, to simulate a test-bench named `test_multiplexer_2_to_1`, run:
+For example, to simulate a test-bench named `test_multiplexer_2_to_1` (note that it's the name of the test-bench, not its file path), run:
 
 ```bash
 parvaj simulate test_multiplexer_2_to_1
@@ -92,7 +92,7 @@ Note that, for the `simulate` command to work, you must be in the project root, 
 
 ### Options
 
-You may also want to use some of the GHDL's simulation options, or the options provided by Parvaj. You can use the command `help` to see the list of available options:
+You may also want to use some of the [GHDL's simulation options](https://ghdl.github.io/ghdl/using/Simulation.html#simulation-options), or the options provided by Parvaj. You can use the command `help` to see the list of available options:
 
 ```bash
 parvaj help simulate
@@ -116,15 +116,40 @@ parvaj simulate --help
     parvaj simulate test_clock_generator -o stop-time=3ns -o vcd-nodate
     ```
 
+    **Hint:** `stop-time` option is useful when your test-bench doesn't end in a finite period of time and could be run infinitely. In this case, you must inform GHDL to limit the simulation time to a specific period, e.g. 3ns; otherwise, the simulation (i.e. elab-running phase) will never stop.
+
 ### Other Commands
 
-Although Parvaj is designed to work mostly config-free, you can configure a few things:
+Although Parvaj is designed to work mostly config-free, you can configure a few things using the `config` command:
 
 -   `gtkwave.cmdline`: If set, this command is used to run GTKWave. This is useful if you want to use a different application for viewing waveforms, or having problems with the default invocation command.
 
     For instance, on MacOS, you can set it to `open`.
 
 -   `ghdl.version`: GHDL version should be auto-detected, but this sets its major version.
+
+#### Example
+
+Some MacOS users cannot invoke GTKWave directly from the command-line using `gtkwave` command. In this case, the fix is to use `open` command.
+
+You can set it like the following:
+
+```bash
+parvaj config gtkwave.cmdline open
+```
+
+Want to make sure it was set?
+
+```bash
+parvaj config gtkwave.cmdline
+# Output: open
+```
+
+Want to unset it (i.e. reset it to the default value)?
+
+```bash
+parvaj config gtkwave.cmdline ""
+```
 
 ## Platform Support
 

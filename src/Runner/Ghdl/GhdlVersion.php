@@ -2,28 +2,36 @@
 
 namespace MAChitgarha\Parvaj\Runner\Ghdl;
 
+use OutOfBoundsException;
+
 class GhdlVersion
 {
-    public const V0 = 0;
-    public const V1 = 1;
-    public const V2 = 2;
-    public const V3 = 3;
+    public const TYPE_0 = "0";
+    public const TYPE_1 = "1";
 
-    private const LIST = [
-        self::V0,
-        self::V1,
-        self::V2,
-        self::V3,
-    ];
+    public function __construct(
+        private string $full,
+        private int $major,
+        private int $minor,
+        private ?int $patch,
+        private ?string $preRelease,
+    ) {
+        if (!(0 <= $major && $major <= 1)) {
+            throw new OutOfBoundsException("GHDL version not supported");
+        }
+    }
 
-    public static function fromMajorVersion(int $majorVersion): int
+    public function getFull(): string
     {
-        return match ($majorVersion) {
-            0 => self::V0,
-            1 => self::V1,
-            2 => self::V2,
-            3 => self::V3,
-            default => throw new \InvalidArgumentException(),
-        };
+        return $this->full;
+    }
+
+    public function getType(): string
+    {
+        if ($this->major === 1 && $this->preRelease === "dev") {
+            return self::TYPE_0;
+        } else {
+            return (string)$this->major;
+        }
     }
 }
