@@ -37,11 +37,30 @@ There are three methods to install Parvaj: Use the AppImage bundle, use the Phar
 -   GHDL
 -   GTKWave
 
-Having a GNU/Linux distribution, installing these should be easy. On Fedora 37, for example, you could simply do:
+Having a Linux distribution, installing these should be easy:
+
+<details>
+
+<summary>Installation on Fedora-based distributions</summary>
 
 ```bash
 sudo dnf install ghdl gtkwave
 ```
+
+</details>
+
+<details>
+
+<summary>Installation on Arch-based distributions</summary>
+
+GTKWave can be installed through Pacman and GHDL through [AUR](https://aur.archlinux.org/packages/ghdl-gcc-git):
+
+```bash
+sudo pacman -S gtkwave
+yay -S ghdl-gcc-git
+```
+
+</details>
 
 ### Getting It
 
