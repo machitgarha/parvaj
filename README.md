@@ -37,7 +37,7 @@ There are three methods to install Parvaj: Use the AppImage bundle, use the Phar
 -   GHDL
 -   GTKWave
 
-Having a GNU/Linux distribution, installing these should be easy. On Fedora 35, for example, you could simply do:
+Having a GNU/Linux distribution, installing these should be easy. On Fedora 37, for example, you could simply do:
 
 ```bash
 sudo dnf install ghdl gtkwave
@@ -78,7 +78,7 @@ Throughout this document, it is supposed you installed Parvaj using this method.
 
 The primary Parvaj command is `simulate`. It simulates a test-bench for you, given its name. Yes, it is really that simple!
 
-For example, to simulate a test-bench named `test_multiplexer_2_to_1`, run:
+For example, to simulate a test-bench named `test_multiplexer_2_to_1` (note that it's the name of the test-bench, not its file path), run:
 
 ```bash
 parvaj simulate test_multiplexer_2_to_1
@@ -115,6 +115,8 @@ parvaj simulate --help
     ```bash
     parvaj simulate test_clock_generator -o stop-time=3ns -o vcd-nodate
     ```
+
+    **Hint:** `stop-time` option is useful when your test-bench doesn't end in a finite period of time and could be run infinitely. In this case, you must inform GHDL to limit the simulation time to a specific period, e.g. 3ns; otherwise, the simulation (i.e. elab-running phase) will never stop.
 
 ### Other Commands
 
