@@ -70,12 +70,12 @@ final class Config extends \Noodlehaus\Config
         return \in_array($key, self::VALID_KEYS, true);
     }
 
-    public function getGhdlVersion(): int
+    public function getGhdlVersion(): string
     {
-        return (int)($this->get(self::KEY_GHDL_VERSION));
+        return $this->get(self::KEY_GHDL_VERSION);
     }
 
-    public function setGhdlVersion(int $ghdlVersion): void
+    public function setGhdlVersion(string $ghdlVersion): void
     {
         $this->set(self::KEY_GHDL_VERSION, $ghdlVersion);
     }

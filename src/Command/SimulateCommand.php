@@ -2,24 +2,19 @@
 
 namespace MAChitgarha\Parvaj\Command;
 
-use InvalidArgumentException;
-
 use MAChitgarha\Component\Pusheh;
 
 use MAChitgarha\Parvaj\Config;
-use MAChitgarha\Parvaj\Console\Application;
 
 use MAChitgarha\Parvaj\PathFinder;
 use MAChitgarha\Parvaj\DependencyResolver;
 use MAChitgarha\Parvaj\Runner\Ghdl\GhdlRunner;
-use MAChitgarha\Parvaj\Runner\Ghdl\GhdlVersion;
 use MAChitgarha\Parvaj\Runner\Ghdl\ElabRunUserOptions;
 use MAChitgarha\Parvaj\Runner\Ghdl\GhdlRunnerFactory;
 use MAChitgarha\Parvaj\Runner\Gtkwave\GtkwaveRunnerFactory;
 use MAChitgarha\Parvaj\Util\ExecutableFinder;
 
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Exception\RuntimeException;
 
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputArgument;
@@ -156,18 +151,10 @@ class SimulateCommand extends Command
         if (!$config->has(Config::KEY_GHDL_VERSION)) {
             $output->writeln("GHDL version not set, auto-detecting...");
 
-            [$versionString, $majorVersion] = GhdlRunner::detectVersion($executableFinder);
-            $output->writeln("Detected GHDL version: $versionString");
+            $version = GhdlRunner::detectVersion($executableFinder);
+            $output->writeln("Detected GHDL version: {$version->getFull()}");
 
-            try {
-                $config->setGhdlVersion(GhdlVersion::fromMajorVersion($majorVersion));
-            } catch (InvalidArgumentException) {
-                throw new RuntimeException(
-                    "The GHDL version is not supported yet" . PHP_EOL .
-                    "Feel free to open an issue here: " . Application::ISSUES_PAGE_LINK
-                );
-            }
-
+            $config->setGhdlVersion($version->getType());
             $output->writeln("");
         }
 

@@ -2,6 +2,10 @@
 
 namespace MAChitgarha\Parvaj\Runner\Ghdl;
 
+use OutOfBoundsException;
+
+use MAChitgarha\Parvaj\Console\Application;
+
 use MAChitgarha\Parvaj\Runner\OptionBuilder;
 
 use MAChitgarha\Parvaj\Util\Process;
@@ -94,11 +98,7 @@ abstract class GhdlRunner
         );
     }
 
-    /**
-     * @return array{0:string,1:int} Pair of GHDL raw version string, and the major
-     * version.
-     */
-    public static function detectVersion(ExecutableFinder $executableFinder): array
+    public static function detectVersion(ExecutableFinder $executableFinder): GhdlVersion
     {
         $ghdlExecutable = $executableFinder->find("ghdl");
 
@@ -106,8 +106,22 @@ abstract class GhdlRunner
         $ghdlVersionProcess->run();
         $output = $ghdlVersionProcess->getCompleteOutput();
 
-        if (\preg_match("/GHDL +((\d+)\.\d+(\.\d+)?([\-_]dev)?)/i", $output, $match)) {
-            return [$match[1], (int)($match[2])];
+        if (\preg_match("/GHDL +((\d+)\.(\d+)(\.(\d+))?([\-_](dev))?)/i", $output, $match)) {
+            $emptyToNull = fn($x) => $x !== "" ? $x : null;
+            try {
+                return new GhdlVersion(
+                    $match[1],
+                    (int)$match[2],
+                    (int)$match[3],
+                    (int)$emptyToNull($match[5]),
+                    $emptyToNull($match[7]),
+                );
+            } catch (OutOfBoundsException) {
+                throw new RuntimeException(
+                    "The GHDL version is not supported yet" . PHP_EOL .
+                    "Feel free to open an issue here: " . Application::ISSUES_PAGE_LINK
+                );
+            }
         }
         throw new RuntimeException("Cannot detect GHDL version");
     }
