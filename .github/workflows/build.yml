@@ -1,92 +1,93 @@
 name: Build release files
 
 on:
-    push:
-        tags: "*"
-    release:
-        types: [created]
+  push:
+    tags:
+      - "*"
 
 jobs:
-    make-phar:
-        name: Make Phar file using Box
-        runs-on: ubuntu-latest
-        steps:
-            -   uses: actions/checkout@v3
+  build-phar:
+    name: Build Phar file using Box
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
 
-            -   name: Setup PHP and Phive
-                uses: shivammathur/setup-php@v2
-                with:
-                    php-version: "8.0"
-                    tools: phive
+      - name: Setup PHP and Phive
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.0"
+          ini-values: phar.readonly=0
+          tools: phive
 
-            -   name: Install Composer dependencies
-                uses: ramsey/composer-install@v2
-                with:
-                    composer-options: "--no-dev --optimize-autoloader"
+      - name: Install Composer dependencies
+        uses: ramsey/composer-install@v2
+        with:
+          composer-options: "--no-dev --optimize-autoloader"
 
-            -   name: Install Box using Phive
-                run: phive install humbug/box --force-accept-unsigned
+      - name: Install Box using Phive
+        run: phive --no-progress install humbug/box@3.16.0 --trust-gpg-keys 41539BBD4020945DB378F98B2DF45277AEF09A2F
 
-            -   name: Build Phar
-                run: ./tools/box compile
+      - name: Build Phar
+        run: ./tools/box compile
 
-            -   name: Upload release files
-                uses: svenstaro/upload-release-action@v2
-                with:
-                    repo_token: ${{ secrets.GITHUB_TOKEN }}
-                    file: build/parvaj.phar
-                    asset_name: parvaj.phar
-                    tag: ${{ github.ref }}
-                    prerelease: true
+      - name: Upload release files
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: build/parvaj.phar
+          asset_name: parvaj.phar
+          tag: ${{ github.ref }}
+          prerelease: true
 
-    make-appimage:
-        env:
-            phpVersion: "8.0.17"
-            appimagetoolDownloadUrl: https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage
-        name: Make AppImage file
-        runs-on: ubuntu-latest
-        steps:
-            -   uses: actions/checkout@v3
-                with:
-                    path: parvaj
+  build-appimage:
+    name: Build AppImage file
+    env:
+      phpVersion: "8.0.28"
+      appimagetoolDownloadUrl: https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          path: parvaj
 
-            -   name: Install Composer dependencies
-                uses: ramsey/composer-install@v2
-                with:
-                    working-directory: parvaj
-                    composer-options: "--no-dev --optimize-autoloader"
+      - name: Install Composer dependencies
+        uses: ramsey/composer-install@v2
+        with:
+          working-directory: parvaj
+          composer-options: "--no-dev --optimize-autoloader"
 
-            -   name: Clone PHP source
-                uses: actions/checkout@v3
-                with:
-                    repository: php/php-src
-                    path: php
-                    ref: php-${{ env.phpVersion }}
-                    fetch-depth: 2
+      - name: Clone PHP source
+        uses: actions/checkout@v3
+        with:
+          repository: php/php-src
+          path: php
+          ref: php-${{ env.phpVersion }}
+          fetch-depth: 2
 
-            -   name: Get appimagetool
-                run: |
-                    curl -L -o appimagetool.AppImage "$appimagetoolDownloadUrl"
-                    chmod +x appimagetool.AppImage
+      - name: Get appimagetool
+        run: |
+          curl -L -o appimagetool.AppImage "$appimagetoolDownloadUrl"
+          chmod +x appimagetool.AppImage
 
-            -   name: Build with Docker
-                run: |
-                    docker build -f ./parvaj/build-aux/appimage/Dockerfile . \
-                        -t appimage-build
-                    docker run \
-                        -e parvajRootPath="./parvaj" \
-                        -e phpSourcePath="./php" \
-                        -e appimagetool="./appimagetool.AppImage" \
-                        --name appimage-build \
-                        appimage-build
-                    docker cp appimage-build:/root/parvaj/build/appimage .
-                    docker rm appimage-build
+      - name: Build with Docker
+        run: |
+          docker build -f ./parvaj/build-aux/appimage/Dockerfile . \
+            -t appimage-build
+          docker run \
+            -e parvajRootPath="./parvaj" \
+            -e phpSourcePath="./php" \
+            -e appimagetool="./appimagetool.AppImage" \
+            --name appimage-build \
+            appimage-build
+          docker cp appimage-build:/root/parvaj/build/appimage .
+          docker rm appimage-build
 
-            -   name: Upload release files
-                uses: svenstaro/upload-release-action@v2
-                with:
-                    repo_token: ${{ secrets.GITHUB_TOKEN }}
-                    file: appimage/*
-                    file_glob: true
-                    tag: ${{ github.ref }}
-                    prerelease: true
+      - name: Upload release files
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: appimage/*
+          file_glob: true
+          tag: ${{ github.ref }}
+          prerelease: true
+

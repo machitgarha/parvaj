@@ -18,6 +18,7 @@ use MAChitgarha\Phirs\DirectoryProviderFactory;
 use MAChitgarha\Phirs\Util\Platform;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Contracts\Cache\ItemInterface;
+use Symfony\Component\Console\Exception\RuntimeException;
 use Symfony\Component\Filesystem\Path;
 
 class PathFinder
@@ -67,14 +68,16 @@ class PathFinder
     public function __construct(string $rootPath)
     {
         $this->rootPath = \realpath($rootPath);
-        $this->cache = self::makeCache($rootPath);
+        $this->cache = self::makeCache($this->rootPath);
     }
 
     private static function makeCache(string $rootPath): FilesystemAdapter
     {
+        $namespace = \preg_replace("/[^\-+_.A-Za-z0-9]/", "_+.+_", $rootPath);
+
         return new FilesystemAdapter(
             directory: self::makeCachePath(),
-            namespace: $rootPath,
+            namespace: $namespace,
         );
     }
 
@@ -222,7 +225,7 @@ class PathFinder
         return
             $this->searchWhileUpdatingCache($unitName, $notCachedFileList) ??
             $this->searchWhileUpdatingCache($unitName, $cachedFileList) ??
-            throw new \RuntimeException("Path of unit '$unitName' not found.");
+            throw new RuntimeException("Path of unit '$unitName' not found.");
     }
 
     /**

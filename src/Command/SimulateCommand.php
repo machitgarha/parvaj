@@ -2,16 +2,24 @@
 
 namespace MAChitgarha\Parvaj\Command;
 
+use MAChitgarha\Component\Pusheh;
+
+use MAChitgarha\Parvaj\Config;
+
 use MAChitgarha\Parvaj\PathFinder;
 use MAChitgarha\Parvaj\DependencyResolver;
+use MAChitgarha\Parvaj\Runner\Ghdl\GhdlRunner;
+use MAChitgarha\Parvaj\Runner\Ghdl\ElabRunUserOptions;
+use MAChitgarha\Parvaj\Runner\Ghdl\GhdlRunnerFactory;
+use MAChitgarha\Parvaj\Runner\Gtkwave\GtkwaveRunnerFactory;
+use MAChitgarha\Parvaj\Util\ExecutableFinder;
+
 use Symfony\Component\Console\Command\Command;
+
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Process\Process;
-use Symfony\Component\Process\ExecutableFinder;
-use Symfony\Component\Filesystem\Path;
 
 class SimulateCommand extends Command
 {
@@ -40,13 +48,8 @@ class SimulateCommand extends Command
 
     protected const OPT_WAVEFORM_NAME = "waveform";
     protected const OPT_WAVEFORM_DESCRIPTION =
-        "The waveform file format. Either ghw and vcd. Case-insensitive.";
+        "The waveform file format. Either ghw or vcd. Case-insensitive.";
     protected const OPT_WAVEFORM_DEFAULT = "vcd";
-
-    protected const OPT_NO_O_NAME = "no-o";
-    protected const OPT_NO_O_DESCRIPTION =
-        "Do not use -o option. It pollutes the project directory, but useful " .
-        "for older GHDL versions where the option is unavailable.";
 
     protected const OPT_SIMULATION_OPTION_NAME = "option";
     protected const OPT_SIMULATION_OPTION_DESCRIPTION =
@@ -88,12 +91,6 @@ class SimulateCommand extends Command
                 static::OPT_WAVEFORM_DEFAULT,
             )
             ->addOption(
-                static::OPT_NO_O_NAME,
-                null,
-                InputOption::VALUE_NONE,
-                static::OPT_NO_O_DESCRIPTION,
-            )
-            ->addOption(
                 static::OPT_SIMULATION_OPTION_NAME,
                 static::OPT_SIMULATION_OPTION_SHORTCUT,
                 InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
@@ -102,10 +99,8 @@ class SimulateCommand extends Command
         ;
     }
 
-    protected function execute(
-        InputInterface $input,
-        OutputInterface $output
-    ): int {
+    protected function execute(InputInterface $input, OutputInterface $output): int
+    {
         $testEntityName = $input->getArgument(
             static::ARG_TEST_ENTITY_NAME_NAME
         );
@@ -115,10 +110,7 @@ class SimulateCommand extends Command
         $waveformType = $input->getOption(
             static::OPT_WAVEFORM_NAME
         );
-        $noO = $input->getOption(
-            static::OPT_NO_O_NAME
-        );
-        $optionsArray = $input->getOption(
+        $simulationOptions = $input->getOption(
             static::OPT_SIMULATION_OPTION_NAME
         );
 
@@ -126,137 +118,46 @@ class SimulateCommand extends Command
         $unitFilePaths = (new DependencyResolver($pathFinder))
             ->resolve($testEntityName);
 
-        ["ghdl" => $ghdlExec, "gtkwave" => $gtkwaveExec] =
-            self::findNecessaryCommands();
+        $executableFinder = new ExecutableFinder();
+        $config = $this->buildConfig($input, $output, $executableFinder);
 
-        self::makeWorkdir($workdir);
+        $ghdlRunner = GhdlRunnerFactory::create($executableFinder, $config);
+        $gtkwaveRunner = GtkwaveRunnerFactory::create($executableFinder, $config);
+
+        Pusheh::createDirRecursive($workdir);
 
         $output->writeln("Analyzing files...");
-        self::analyzeEntityFiles($ghdlExec, $unitFilePaths, $workdir);
-
-        $waveformFilePath = self::generateWaveformFilePath(
-            $workdir,
-            $testEntityName,
-            $waveformType,
-        );
+        $ghdlRunner->analyze($unitFilePaths);
 
         $output->writeln("Elab-running the test...");
-        self::elabRun(
-            $ghdlExec,
+        $waveformFilePath = $ghdlRunner->elabRun(
             $testEntityName,
-            $waveformFilePath,
-            $workdir,
-            $waveformType,
-            $noO,
-            self::normalizeSimulationOptions($optionsArray),
+            new ElabRunUserOptions($waveformType, $simulationOptions)
         );
 
         $output->writeln("Opening the results in GtkWave...");
-        self::openGtkWave($gtkwaveExec, $waveformFilePath);
+        $gtkwaveRunner->open($waveformFilePath, $waveformType);
 
         return 0;
     }
 
-    private static function runProcess(array $shellArgs): void
-    {
-        // Never end a process, until the user kills it himself
-        $process = new Process($shellArgs, null, null, null, null);
+    private function buildConfig(
+        InputInterface $input,
+        OutputInterface $output,
+        ExecutableFinder $executableFinder
+    ): Config {
+        $config = new Config();
 
-        if ($process->run() !== 0) {
-            throw new \Exception(
-                !empty($process->getErrorOutput()) ?
-                $process->getErrorOutput() :
-                $process->getOutput()
-            );
-        }
-    }
+        if (!$config->has(Config::KEY_GHDL_VERSION)) {
+            $output->writeln("GHDL version not set, auto-detecting...");
 
-    private static function findNecessaryCommands(): array
-    {
-        $executableFinder = new ExecutableFinder();
+            $version = GhdlRunner::detectVersion($executableFinder);
+            $output->writeln("Detected GHDL version: {$version->getFull()}");
 
-        foreach($paths = [
-            "ghdl" => $executableFinder->find("ghdl"),
-            "gtkwave" => $executableFinder->find("gtkwave"),
-        ] as $item => $exec) {
-            if ($exec === null) {
-                throw new \Exception("Could not find '$item' executable.");
-            }
+            $config->setGhdlVersion($version->getType());
+            $output->writeln("");
         }
 
-        return $paths;
-    }
-
-    private static function makeWorkdir(string $workdirPath): void
-    {
-        if (!\is_dir($workdirPath) && !@\mkdir($workdirPath, 0755, true)) {
-            throw new \Exception("Unable to create '$workdirPath' directory.");
-        }
-    }
-
-    private static function analyzeEntityFiles(
-        string $ghdlExec,
-        array $unitFilePaths,
-        string $workdir
-    ): void {
-        // TODO: Allow the client to choose VHDL version
-        self::runProcess([
-            $ghdlExec, "-a", "--workdir=$workdir", ...$unitFilePaths
-        ]);
-    }
-
-    private static function generateWaveformFilePath(
-        string $workdir,
-        string $testEntityName,
-        string $waveformType
-    ): string {
-        return Path::join($workdir, "$testEntityName.$waveformType");
-    }
-
-    private static function normalizeSimulationOptions(array $options): array
-    {
-        return \array_map(
-            fn (string $option) => (
-                // Append one or two dashes based on option length
-                \strlen(explode('=', $option)[0]) === 1 ? '-' : '--'
-            ) . $option,
-            $options
-        );
-    }
-
-    private static function elabRun(
-        string $ghdlExec,
-        string $testEntityName,
-        string $outputWaveformFilePath,
-        string $workdir,
-        string $waveformType,
-        bool $noO,
-        array $options
-    ): void {
-        $waveformOption = match (\strtolower($waveformType)) {
-            "vcd" => "--vcd=$outputWaveformFilePath",
-            "ghw" => "--wave=$outputWaveformFilePath",
-
-            default => throw new \RuntimeException(
-                "Invalid waveform type '$waveformType'"
-            ),
-        };
-
-        $oOption = ["-o", Path::join($workdir, $testEntityName)];
-        if ($noO) {
-            $oOption = [];
-        }
-
-        self::runProcess([
-            $ghdlExec, "--elab-run", "--workdir=$workdir", ...$oOption,
-            $testEntityName, $waveformOption, ...$options,
-        ]);
-    }
-
-    private static function openGtkWave(
-        string $gtkwaveExec,
-        string $waveformFilePath
-    ): void {
-        self::runProcess([$gtkwaveExec, $waveformFilePath]);
+        return $config;
     }
 }
