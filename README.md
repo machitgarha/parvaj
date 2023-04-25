@@ -118,13 +118,36 @@ parvaj simulate --help
 
 ### Other Commands
 
-Although Parvaj is designed to work mostly config-free, you can configure a few things:
+Although Parvaj is designed to work mostly config-free, you can configure a few things using the `config` command:
 
 -   `gtkwave.cmdline`: If set, this command is used to run GTKWave. This is useful if you want to use a different application for viewing waveforms, or having problems with the default invocation command.
 
     For instance, on MacOS, you can set it to `open`.
 
 -   `ghdl.version`: GHDL version should be auto-detected, but this sets its major version.
+
+#### Example
+
+Some MacOS users cannot invoke GTKWave directly from the command-line using `gtkwave` command. In this case, the fix is to use `open` command.
+
+You can set it like the following:
+
+```bash
+parvaj config gtkwave.cmdline open
+```
+
+Want to make sure it was set?
+
+```bash
+parvaj config gtkwave.cmdline
+# Output: open
+```
+
+Want to unset it (i.e. reset it to the default value)?
+
+```bash
+parvaj config gtkwave.cmdline ""
+```
 
 ## Platform Support
 
