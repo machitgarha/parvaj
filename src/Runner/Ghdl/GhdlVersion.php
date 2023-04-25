@@ -19,8 +19,6 @@ class GhdlVersion
         if (!(0 <= $major && $major <= 1)) {
             throw new OutOfBoundsException("GHDL version not supported");
         }
-
-        $this->preRelease = \strtolower($this->preRelease);
     }
 
     public function getFull(): string
