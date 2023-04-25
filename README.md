@@ -58,7 +58,6 @@ yay -S ghdl-gcc-git
 
     **Note:** The AppImage does not provide a GUI, so double-clicking it does nothing.
     
-    **Note:** For the Arch make sure to install [AppImageLauncher<sup>AUR</sup>](https://aur.archlinux.org/packages/appimagelauncher) first.
 1.  Make it executable.
 
     ```bash
@@ -128,7 +127,6 @@ Tested platforms include:
 
 -   Fedora 28+
 -   Ubuntu 18.04+
--   Arch 6.2.2-zen2-1-zen+
 
 Parvaj should work on Linux-based platforms, and also generally Unix-like ones (e.g. OS X, Windows WSL).
 
