@@ -92,7 +92,7 @@ Note that, for the `simulate` command to work, you must be in the project root, 
 
 ### Options
 
-You may also want to use some of the GHDL's simulation options, or the options provided by Parvaj. You can use the command `help` to see the list of available options:
+You may also want to use some of the [GHDL's simulation options](https://ghdl.github.io/ghdl/using/Simulation.html#simulation-options), or the options provided by Parvaj. You can use the command `help` to see the list of available options:
 
 ```bash
 parvaj help simulate
