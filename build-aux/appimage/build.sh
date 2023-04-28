@@ -31,7 +31,7 @@ Options:
 phpConfigureOptions="--disable-fileinfo --disable-phar --disable-session \
     --disable-cgi --disable-pdo --disable-simplexml --disable-xmlreader \
     --disable-xmlwriter --enable-phpdbg=no --without-sqlite3 --enable-mbstring \
-    --with-zlib=static --enable-intl --enable-pcntl"
+    --with-zlib=static --enable-pcntl"
 phpMakeJobsCount="4"
 phpIniCustomSettings="
 [PHP]
