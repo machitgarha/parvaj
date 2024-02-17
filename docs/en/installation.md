@@ -72,6 +72,8 @@ yay -S parvaj-bin
 
 ## As Git Submodule
 
+**Warning:** This method is DEPRECATED. Relying on this is highly discouraged.
+
 ### Requirements
 
 -   PHP 8.0+

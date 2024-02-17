@@ -33,7 +33,7 @@ There are four methods to install Parvaj:
 -   [Use the AppImage bundle (recommended)](#use-the-appimage-bundle)
 -   [Use the Phar file](docs/en/installation.md#use-the-phar-file)
 -   [Via package manager](docs/en/installation.md#)
--   [As Git submodule](docs/en/installation.md#use-a-phar-file)
+-   [As Git submodule (deprecated)](docs/en/installation.md#use-a-phar-file)
 
 In doubt? See [Which one to use?](docs/en/installations.md#which-one-to-use).
 
