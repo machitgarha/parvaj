@@ -1,6 +1,6 @@
 # Parvaj
 
-[![Version](https://img.shields.io/github/v/release/machitgarha/parvaj?color=darkgreen&label=Version&style=flat-square)](https://github.com/machitgarha/parvaj/releases) [![Available As AppImage](https://img.shields.io/badge/Available%20As-AppImage-lawngreen?style=flat-square)](https://github.com/machitgarha/parvaj/releases/latest/download/parvaj-x86_64.AppImage) [![Available As Phar](https://img.shields.io/badge/Available%20As-Phar-lawngreen?style=flat-square)](https://github.com/machitgarha/parvaj/releases/latest/download/parvaj.phar)
+[![Version](https://img.shields.io/github/v/release/machitgarha/parvaj?color=darkgreen&label=Version&style=flat-square)](https://github.com/machitgarha/parvaj/releases) [![Available As AppImage](https://img.shields.io/badge/Available%20As-AppImage-lawngreen?style=flat-square)](https://github.com/machitgarha/parvaj/releases/latest/download/parvaj-x86_64.AppImage) [![Available As Phar](https://img.shields.io/badge/Available%20As-Phar-lawngreen?style=flat-square)](https://github.com/machitgarha/parvaj/releases/latest/download/parvaj.phar) [![Available At AUR package](https://img.shields.io/badge/Available%20At-AUR-lawngreen?style=flat-square)](https://aur.archlinux.org/packages/parvaj-bin)
 
 Easy and fast (both in the sense of performance and development speed) VHDL simulation tool, integrating GHDL and GTKWave.
 
@@ -28,7 +28,16 @@ Easy and fast (both in the sense of performance and development speed) VHDL simu
 
 ## Let's Install!
 
-There are three methods to install Parvaj: Use the AppImage bundle, use the Phar file, or include it as Git submodule. We only cover the preferred method here. For other methods and why you should choose each, please refer to [installation methods](docs/en/installation.md).
+**Note:** Currently, we only cover and support Linux distributions (feel free to add support for other platforms as well).
+
+There are four methods to install Parvaj:
+
+-   [Use the AppImage bundle (recommended)](#use-the-appimage-bundle)
+-   [Use the Phar file](docs/en/installation.md#use-the-phar-file)
+-   [Via package manager](docs/en/installation.md#via-package-manager) (Currently Arch-based only)
+-   [As Git submodule (deprecated)](docs/en/installation.md#as-git-submodule)
+
+In doubt? See [Which one to use?](docs/en/installations.md#which-one-to-use).
 
 ## Use the AppImage Bundle
 
@@ -41,7 +50,7 @@ Having a Linux distribution, installing these should be easy:
 
 <details>
 
-<summary>Installation on Fedora-based distributions</summary>
+<summary>Fedora-based</summary>
 
 ```bash
 sudo dnf install ghdl gtkwave
@@ -51,13 +60,25 @@ sudo dnf install ghdl gtkwave
 
 <details>
 
-<summary>Installation on Arch-based distributions</summary>
+<summary>Arch-based</summary>
+
+<br/>
 
 GTKWave can be installed through Pacman and GHDL through [AUR](https://aur.archlinux.org/packages/ghdl-gcc-git):
 
 ```bash
 sudo pacman -S gtkwave
 yay -S ghdl-gcc-git
+```
+
+</details>
+
+<details>
+
+<summary>Debian-based (e.g. Ubuntu)</summary>
+
+```bash
+sudo apt install ghdl gtkwave
 ```
 
 </details>
@@ -100,12 +121,10 @@ The primary Parvaj command is `simulate`. It simulates a test-bench for you, giv
 For example, to simulate a test-bench named `test_multiplexer_2_to_1` (note that it's the name of the test-bench, not its file path), run:
 
 ```bash
-parvaj simulate test_multiplexer_2_to_1
 # Or even shorter:
 parvaj s test_multiplexer_2_to_1
 ```
 
-Woah! Got the magic?
 
 Note that, for the `simulate` command to work, you must be in the project root, not one of its sub-paths. It might be annoying for some, but not implemented yet ([#2](https://github.com/machitgarha/parvaj/issues/2)).
 
