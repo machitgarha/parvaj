@@ -4,25 +4,26 @@
 
 The preferred method is to use the AppImage. However, each method has its own pros and cons.
 
-||AppImage|Phar|Git Submodule|
-|:-:|:-:|:-:|:-:|
-|Easy Installation|✅✅|✅||
-|Less Requirements<br/>(Being Self-Contained)|✅✅|✅||
-|Less (Download) Size||✅|✅|
-|Good Startup Performance||✅|✅|
-|Global Installation|✅|✅||
-|Easy to Update|✅|✅|✅✅|
-|Easy to Use|✅|✅||
+||AppImage|Phar|Package Manager|Git Submodule|
+|:-:|:-:|:-:|:-:|:-:|
+|Being Cross-Platform                        |✅✅|✅✅|    |✅✅|
+|Easy Installation                           |✅✅|✅  |✅✅|    |
+|Less Requirements<br/>(Being Self-Contained)|✅✅|✅  |✅✅|    |
+|Less (Download) Size                        |    |✅  |✅  |✅  |
+|Good Startup Performance                    |    |✅  |✅✅|✅  |
+|Global Installation                         |✅  |✅  |✅✅|    |
+|Easy to Update                              |✅  |✅  |✅✅|✅✅|
+|Easy to Use                                 |✅  |✅  |✅✅|    |
 
 ### Notes
 
--   JIT (i.e. Just-In-Time compiler) for PHP is enabled by default in the AppImage. Although you can enable it for the other methods as well.
+-   JIT (i.e. Just-In-Time compiler) for PHP is enabled by default in the AppImage. Although you can enable it manually for the other methods as well.
 
 ## Use the AppImage Bundle
 
 See [here](../../README.md#use-the-appimage-bundle) for instructions.
 
-## Use a Phar File
+## Use the Phar File
 
 ### Requirements
 
@@ -56,6 +57,16 @@ See [here](../../README.md#use-the-appimage-bundle) for instructions.
     ```bash
     parvaj
     ```
+
+## Via Package Manager
+
+### Arch-based Distributions
+
+Use [AUR helpers](https://wiki.archlinux.org/title/AUR_helpers) ([parvaj-bin](https://aur.archlinux.org/packages/parvaj-bin)):
+
+```bash
+yay -S parvaj-bin
+```
 
 ## As Git Submodule
 

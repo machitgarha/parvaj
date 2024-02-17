@@ -28,16 +28,16 @@ Easy and fast (both in the sense of performance and development speed) VHDL simu
 
 ## Let's Install!
 
-There are three methods to install Parvaj: Use the AppImage bundle, use the Phar file, or include it as Git submodule. We only cover the preferred method here. For other methods and why you should choose each, please refer to [installation methods](docs/en/installation.md).
+There are four methods to install Parvaj:
+
+-   [Use the AppImage bundle (recommended)](#use-the-appimage-bundle)
+-   [Use the Phar file](docs/en/installation.md#use-the-phar-file)
+-   [Via package manager](docs/en/installation.md#)
+-   [As Git submodule](docs/en/installation.md#use-a-phar-file)
+
+In doubt? See [Which one to use?](docs/en/installations.md#which-one-to-use).
 
 ## Use the AppImage Bundle
-
-### Installing With Package Managers
-
-Installing on Arch-based distributions with [AUR helpers](https://wiki.archlinux.org/title/AUR_helpers) ([parvaj-bin](https://aur.archlinux.org/packages/parvaj-bin))
-```bash
-yay -S parvaj-bin
-```
 
 ### Requirements
 
@@ -107,12 +107,10 @@ The primary Parvaj command is `simulate`. It simulates a test-bench for you, giv
 For example, to simulate a test-bench named `test_multiplexer_2_to_1` (note that it's the name of the test-bench, not its file path), run:
 
 ```bash
-parvaj simulate test_multiplexer_2_to_1
 # Or even shorter:
 parvaj s test_multiplexer_2_to_1
 ```
 
-Woah! Got the magic?
 
 Note that, for the `simulate` command to work, you must be in the project root, not one of its sub-paths. It might be annoying for some, but not implemented yet ([#2](https://github.com/machitgarha/parvaj/issues/2)).
 
