@@ -32,6 +32,13 @@ There are three methods to install Parvaj: Use the AppImage bundle, use the Phar
 
 ## Use the AppImage Bundle
 
+### Installing With Package Managers
+
+Installing on Arch-based distributions with [AUR helpers](https://wiki.archlinux.org/title/AUR_helpers) ([parvaj-bin](https://aur.archlinux.org/packages/parvaj-bin))
+```bash
+yay -S parvaj-bin
+```
+
 ### Requirements
 
 -   GHDL
