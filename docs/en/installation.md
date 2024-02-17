@@ -68,6 +68,8 @@ Use [AUR helpers](https://wiki.archlinux.org/title/AUR_helpers) ([parvaj-bin](ht
 yay -S parvaj-bin
 ```
 
+(Special thanks to [@mkoushan](https://github.com/mkoushan) for maintaining it)
+
 ## As Git Submodule
 
 ### Requirements
