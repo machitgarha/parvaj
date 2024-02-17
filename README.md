@@ -50,7 +50,7 @@ Having a Linux distribution, installing these should be easy:
 
 <details>
 
-<summary>Installation on Fedora-based distributions</summary>
+<summary>Fedora-based</summary>
 
 ```bash
 sudo dnf install ghdl gtkwave
@@ -60,13 +60,25 @@ sudo dnf install ghdl gtkwave
 
 <details>
 
-<summary>Installation on Arch-based distributions</summary>
+<summary>Arch-based</summary>
+
+<br/>
 
 GTKWave can be installed through Pacman and GHDL through [AUR](https://aur.archlinux.org/packages/ghdl-gcc-git):
 
 ```bash
 sudo pacman -S gtkwave
 yay -S ghdl-gcc-git
+```
+
+</details>
+
+<details>
+
+<summary>Debian-based (e.g. Ubuntu)</summary>
+
+```bash
+sudo apt install ghdl gtkwave
 ```
 
 </details>
