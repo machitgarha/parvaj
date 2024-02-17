@@ -28,6 +28,8 @@ Easy and fast (both in the sense of performance and development speed) VHDL simu
 
 ## Let's Install!
 
+**Note:** Currently, we only cover and support Linux distributions (feel free to add support for other platforms as well).
+
 There are four methods to install Parvaj:
 
 -   [Use the AppImage bundle (recommended)](#use-the-appimage-bundle)

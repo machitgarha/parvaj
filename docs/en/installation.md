@@ -6,7 +6,7 @@ The preferred method is to use the AppImage. However, each method has its own pr
 
 ||AppImage|Phar|Package Manager|Git Submodule|
 |:-:|:-:|:-:|:-:|:-:|
-|Being Cross-Platform                        |✅✅|✅✅|    |✅✅|
+|Cross-Platform                              |✅  |✅✅|    |✅✅|
 |Easy Installation                           |✅✅|✅  |✅✅|    |
 |Less Requirements<br/>(Being Self-Contained)|✅✅|✅  |✅✅|    |
 |Less (Download) Size                        |    |✅  |✅  |✅  |
